@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sone Restaurant - Billing App</title>
+    <style>
+        :root {
+            --primary-color: #d35400;
+            --secondary-color: #e67e22;
+            --accent-color: #c0392b;
+            --success-color: #27ae60;
+            --background-color: #fdf2e9;
+            --text-color: #333;
+            --border-radius: 8px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 900px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin: 0;
+            font-size: 28px;
+            text-transform: uppercase;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+            font-weight: bold;
+        }
+
+        .main-content {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .input-section {
+            flex: 1;
+            min-width: 280px;
+            background: #fff5eb;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            border: 1px solid #f0d8c3;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        .autocomplete-container { position: relative; }
+        
+        .autocomplete-items {
+            position: absolute;
+            border: 1px solid #d4d4d4;
+            border-bottom: none;
+            border-top: none;
+            z-index: 99;
+            top: 100%;
+            left: 0;
+            right: 0;
+            max-height: 200px;
+            overflow-y: auto;
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .autocomplete-items div {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #d4d4d4;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .autocomplete-items div:hover {
+            background-color: #fdebd0;
+        }
+        
+        .item-price-preview {
+            color: #d35400;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        button:hover { background-color: #ba4a00; }
+
+        .btn-print { background-color: var(--success-color); }
+        .btn-print:hover { background-color: #219a52; }
+        
+        .btn-clear { background-color: var(--accent-color); }
+        .btn-clear:hover { background-color: #a93226; }
+
+        .bill-section {
+            flex: 2;
+            min-width: 320px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: var(--secondary-color);
+            color: white;
+            position: sticky;
+            top: 0;
+        }
+
+        .table-container {
+            overflow-y: auto;
+            max-height: 350px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .total-section {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+        }
+
+        .total-amount {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .delete-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        /* --- PRINT RECEIPT STYLES --- */
+        #print-area { display: none; }
+
+        @media print {
+            @page {
+                margin: 5mm; /* Removes default browser headers/footers that cause extra pages */
+                size: auto;
+            }
+            body, html { 
+                background-color: white; 
+                margin: 0; 
+                padding: 0;
+                min-height: auto !important; /* Prevents body height from pushing to page 2 */
+            }
+            .app-container { display: none !important; }
+            
+            #print-area {
+                display: block;
+                width: 100%;
+                max-width: 100mm;
+                margin: 0 auto;
+                background-color: #eedc5b !important; /* Yellow background */
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                padding: 15px;
+                border: 2px solid #000;
+                color: #000;
+                font-family: 'Arial', sans-serif;
+                box-sizing: border-box;
+                page-break-inside: avoid;
+            }
+
+            .receipt-header { text-align: center; margin-bottom: 15px; }
+            .receipt-header h2 { 
+                margin: 5px 0; 
+                font-size: 26px; 
+                text-transform: uppercase;
+                font-weight: 900;
+                letter-spacing: 1px;
+            }
+            .receipt-header .address { font-size: 12px; font-weight: bold; }
+            .receipt-header .top-bar {
+                display: flex; 
+                justify-content: space-between; 
+                font-size: 11px; 
+                font-weight: bold;
+                border-bottom: 1px solid #000;
+                padding-bottom: 3px;
+                margin-bottom: 8px;
+            }
+            .receipt-header .meta-bar {
+                display: flex; 
+                justify-content: space-between; 
+                font-size: 13px; 
+                font-weight: bold;
+                margin-top: 10px;
+                text-align: left;
+            }
+
+            .receipt-table { width: 100%; border-collapse: collapse; border: 1px solid #000; margin-bottom: 0;}
+            .receipt-table th, .receipt-table td { 
+                border: 1px solid #000; 
+                padding: 6px; 
+                font-size: 13px;
+                font-weight: bold;
+            }
+            .receipt-table th { background-color: transparent; color: #000; }
+            
+            .receipt-total {
+                display: flex;
+                justify-content: space-between;
+                font-weight: bold;
+                font-size: 16px;
+                border: 1px solid #000;
+                border-top: none;
+                padding: 6px;
+            }
+
+            .receipt-footer { 
+                text-align: right; 
+                margin-top: 40px; 
+                font-weight: bold; 
+                font-size: 14px; 
+            }
+            .receipt-footer span {
+                border-top: 1px solid #000; 
+                padding-top: 5px; 
+            }
+        }
+
+        @media (max-width: 600px) {
+            .main-content { flex-direction: column; }
+            .button-group { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <header>
+            <h1>Sone Restaurant</h1>
+            <div class="subtitle">DUMRAON STATION ROAD, DUMRAON | Mob.: 9155745145</div>
+        </header>
+
+        <div class="main-content">
+            <div class="input-section">
+                <h3><span style="font-size: 1.2em;">🍽️</span> Add Item</h3>
+                <div class="form-group autocomplete-container">
+                    <label for="itemInput">Item Name</label>
+                    <input type="text" id="itemInput" placeholder="Search item here..." autocomplete="off">
+                    <div id="autocompleteList" class="autocomplete-items"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="priceInput">Price (Rs.)</label>
+                    <input type="number" id="priceInput" readonly style="background-color: #e9ecef;">
+                </div>
+
+                <div class="form-group">
+                    <label for="qtyInput">Quantity</label>
+                    <input type="number" id="qtyInput" value="1" min="1">
+                </div>
+
+                <button onclick="addItemToBill()">Add to Bill ➕</button>
+            </div>
+
+            <div class="bill-section">
+                <h3>🧾 Current Bill</h3>
+                <div class="table-container">
+                    <table id="billTable">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Qty</th>
+                                <th>Price</th>
+                                <th>Total</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="billBody">
+                            <!-- Items will be added here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="total-section">
+                    <span>Grand Total:</span>
+                    <span class="total-amount">Rs. <span id="grandTotal">0.00</span></span>
+                </div>
+                
+                <div class="button-group">
+                    <button class="btn-print" onclick="printBill()">🖨️ Print Bill</button>
+                    <button class="btn-clear" onclick="clearBill()">🗑️ Clear / New Order</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="print-area">
+        <!-- Filled by JS -->
+    </div>
+
+    <script>
+        const menuData = {
+            "Veg. Fried Rice": 170, "Egg Fried Rice": 190, "Chi. Fried Rice": 260, "Mushroom Fried Rice": 250, "Mix. Fried Rice": 270, "Paneer Fried Rice": 250,
+            "Veg. Manchurian (F)": 170, "Veg. Manchurian (H)": 110, "Paneer Chilly (F)": 220, "Paneer Chilly (H)": 140, "Chi. Chilly (B/L) (F)": 290, "Chi. Chilly (B/L) (H)": 170, "Chi. Chilly (B) (F)": 230, "Chi. Chilly (B) (H)": 150, "Chi. Manchurian": 280, "Chi. Lolliop (B/L) (F)": 310, "Mushroom Chilly (F)": 250, "Mushroom Chilly (H)": 150, "Sweet Corn Crispy": 110, "Baby Corn Crispry": 270,
+            "Fruit Cream": 90, "Khir": 80, "Curd": 80, "Kalajamun": 25, "Rasgulla": 20, "Tea Spl.": 20, "Coffee": 45,
+            "Fish Fry": 140, "Fish Curry": 150, "Fish Estu": 160, "Fish Masala": 160, "Fish Do Pyaza": 150,
+            "Chi. Estu": 190, "Chi. Curry": 160, "Chi. Do Payaza": 180, "Chi. Pasanda": 220, "Chi. Butter Masala": 200, "Chi. Masala": 200, "Chi. Moglai": 210, "Chi. Shahi Kurma": 210, "Chi. Kurma": 210, "Chi. Noorani": 230, "Chi. Dehati (F)": 550, "Chi. Dehati (H)": 320, "Chi. Murg Mussalam": 560, "Chi. Karahi": 220, "Chi. Kasha (F)": 510, "Chi. Tikka Butter Masala": 330, "Chi. Sone Spl. (F)": 570, "Chi. Sone Spl. (H)": 340,
+            "Tawa Roti": 10, "Tawa Butter Roti": 12, "Roti": 12, "Butter Roti": 15, "Naan": 60, "Butter Naan": 80, "T. Paratha": 70, "Plain Kulcha": 80, "Masala Kulcha": 110, "Aloo Paratha": 70, "Veg. Stuff Paratha": 100, "Paneer Stuff Paratha": 110, "Shahi Paratha": 130, "Sone Shahi Paratha": 140, "Shahi Naan": 130, "Chi. Moglai Paratha": 190, "Veg. Moglai Paratha": 120, "Veg. Stuff Naan": 120, "Paneer Stuff Naan": 140, "Garlic Naan": 90,
+            "Plain Rice": 100, "Jeera Rice": 110, "Onion Fry Rice": 120, "Veg. Pulao": 150, "Pease Pulao": 140, "Chicken Pulao": 230, "Veg. Biryani": 170, "Egg Biryani": 190, "Chicken Biryani": 220, "Veg. Shahi Pulao": 190, "Sone Special Pulao": 210,
+            "Plain Dal": 90, "Dal Fry": 110, "Dal Tarka": 120, "Dal Makhani": 140, "Dal Moglai": 160, "Dal Butter Fry": 130,
+            "Tost and Butter": 60, "Tost Omlete": 90, "Omlete": 60, "Cholla Bhatura": 110, "Paneer Paratha": 110, "Veg. Sandwich": 100, "Paneer Sandwich": 130,
+            "Vegetable Pakora": 160, "Paneer Pakora": 240, "Chicken Pakora": 260, "Egg Pakora": 160, "Veg. Cutlete": 160, "Chicken Cutlete": 200, "Egg. Roll": 150, "Veg. Roll": 120, "Chicken Roll": 230, "Peanut Masala": 150, "Pappad Masala": 120, "Finger Chips": 130, "Govi Pakora": 140, "Onion Pakora": 150, "Chicken Fry": 160, "Fresh Paneer": 200, "Peanut": 120,
+            "Tomato Soup": 80, "Veg. Hot & Source Soup": 100, "Veg. Manchow Soup": 120, "Chicken Cream Soup": 140, "Chicken Hot & Source Soup": 170, "Chicken Manchow Soup": 150,
+            "Veg. Raita": 130, "Boondi Raita": 110, "Green Salad- L": 110, "Green Salad- S": 70,
+            "Chi. Goli Kabab": 260, "Paneer Goli Kabab": 250, "Veg. Goli Kabab": 220, "Chi. Ginger Kabab": 260, "Chi. Reshmi Kabab": 280, "Chi. Tandoori (F)": 450, "Chi. Tandoori (H)": 260, "Chi. Leg Kabab": 280, "Paneer Tikka": 250, "Chi. Tikka": 270,
+            "Egg. Curry": 110, "Egg Do Payaza": 120, "Egg Butter Masala": 140, "Egg Masala": 150, "Omlete Curry": 120, "Egg Bugiya": 80,
+            "Aloo Govi": 130, "Aloo Do Payaza": 140, "Aloo Parwal": 130, "Aloo Paneer": 150, "Aloo Matar": 130, "Aloo Palak": 130, "Mix Vegetable": 150, "Veg. Jhal Phrazy": 160, "Veg. Kofta Curry": 160, "Stuff Tomato": 160, "Stuff Capssicam": 160, "Veg. Navratan Kurma": 190, "Aloo Dam Kashmiri": 190, "Aloo Dam Banarsi": 180, "Vegetable Chat-Patta": 160, "Seasonal Veg. Bhujiya": 120, "Sone Spl. Veg.": 180,
+            "Paneer Masala": 200, "Paneer Butter Masala": 200, "Paneer Do Pyaza": 190, "Shahi Paneer": 210, "Paneer Bhujiya": 210, "Paneer Shahi Kurma": 230, "Paneer Pasanda": 220, "Paneer Karahi": 230, "Matar Paneer": 150, "Palak Paneer": 170, "Paneer Diwani": 250, "Malai Kofta": 210, "Sone Spl. Paneer": 270, "Sone Spl. Paneer Chat-Patta": 250, "Paneer Estu": 210, "Paneer Dehati (F)": 290, "Paneer Punjabi": 250,
+            "Mushroom Do Piyaza": 220, "Mushroom (B) Masala": 230, "Mushroom Masala": 230, "Mushroom Karahi": 240, "Mushroom Curry": 210, "Mushroom Estu": 220, "Mushroom Dehati": 300,
+            "Veg. Chowmein (H)": 110, "Veg. Chowmein (F)": 190, "Chicken Chowmein": 270, "Egg Chowmein": 230, "Paneer Chowmein": 240, "Mix Chowmein": 260, "Mushroom Chowmein": 250
+        };
+
+        const itemNames = Object.keys(menuData);
+        let billItems = [];
+        let billCounter = 1; // Started from 1 as requested
+
+        // Autocomplete functionality
+        const input = document.getElementById("itemInput");
+        const list = document.getElementById("autocompleteList");
+        const priceInput = document.getElementById("priceInput");
+
+        input.addEventListener("input", function() {
+            let val = this.value;
+            list.innerHTML = "";
+            priceInput.value = "";
+            if (!val) { return false; }
+            
+            for (let i = 0; i < itemNames.length; i++) {
+                if (itemNames[i].toLowerCase().includes(val.toLowerCase())) {
+                    let b = document.createElement("DIV");
+                    
+                    let regex = new RegExp(`(${val})`, "gi");
+                    let highlightedName = itemNames[i].replace(regex, "<strong>$1</strong>");
+                    
+                    b.innerHTML = `<span>${highlightedName}</span>`;
+                    b.innerHTML += `<span class="item-price-preview">Rs. ${menuData[itemNames[i]]}</span>`;
+                    b.innerHTML += `<input type='hidden' value='${itemNames[i]}'>`;
+                    
+                    b.addEventListener("click", function(e) {
+                        input.value = this.getElementsByTagName("input")[0].value;
+                        priceInput.value = menuData[input.value];
+                        list.innerHTML = "";
+                        document.getElementById("qtyInput").focus();
+                    });
+                    list.appendChild(b);
+                }
+            }
+        });
+
+        document.addEventListener("click", function (e) {
+            if (e.target !== input) {
+                list.innerHTML = "";
+            }
+        });
+        
+        input.addEventListener("keydown", function(e) {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                let exactMatch = itemNames.find(name => name.toLowerCase() === this.value.toLowerCase());
+                if(exactMatch) {
+                    this.value = exactMatch;
+                    priceInput.value = menuData[exactMatch];
+                    list.innerHTML = "";
+                    document.getElementById("qtyInput").focus();
+                } else if(list.firstChild) {
+                   list.firstChild.click();
+                }
+            }
+        });
+
+        document.getElementById("qtyInput").addEventListener("keydown", function(e) {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                addItemToBill();
+            }
+        });
+
+        function addItemToBill() {
+            const name = document.getElementById("itemInput").value;
+            const price = parseFloat(document.getElementById("priceInput").value);
+            const qty = parseInt(document.getElementById("qtyInput").value);
+
+            if (!name || isNaN(price) || isNaN(qty) || qty <= 0) {
+                alert("Please select a valid item and enter quantity.");
+                return;
+            }
+
+            const itemTotal = price * qty;
+            const existingItemIndex = billItems.findIndex(item => item.name === name);
+            
+            if (existingItemIndex > -1) {
+                billItems[existingItemIndex].qty += qty;
+                billItems[existingItemIndex].total = billItems[existingItemIndex].qty * billItems[existingItemIndex].price;
+            } else {
+                billItems.push({ name: name, price: price, qty: qty, total: itemTotal });
+            }
+
+            updateBillDisplay();
+            
+            document.getElementById("itemInput").value = "";
+            document.getElementById("priceInput").value = "";
+            document.getElementById("qtyInput").value = "1";
+            document.getElementById("itemInput").focus();
+        }
+
+        function removeItem(index) {
+            billItems.splice(index, 1);
+            updateBillDisplay();
+        }
+
+        function updateBillDisplay() {
+            const tbody = document.getElementById("billBody");
+            tbody.innerHTML = "";
+            let grandTotal = 0;
+
+            billItems.forEach((item, index) => {
+                grandTotal += item.total;
+                
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${item.name}</td>
+                    <td>${item.qty}</td>
+                    <td>${item.price.toFixed(2)}</td>
+                    <td>${item.total.toFixed(2)}</td>
+                    <td><button class="delete-btn" onclick="removeItem(${index})">X</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById("grandTotal").innerText = grandTotal.toFixed(2);
+        }
+
+        function clearBill() {
+            if(confirm("Are you sure you want to clear the current bill?")) {
+                billItems = [];
+                updateBillDisplay();
+            }
+        }
+
+        function printBill() {
+            if (billItems.length === 0) {
+                alert("Bill is empty! Add some items first.");
+                return;
+            }
+
+            const printDiv = document.getElementById("print-area");
+            
+            const today = new Date();
+            const dateStr = today.getDate().toString().padStart(2, '0') + '/' + 
+                            (today.getMonth() + 1).toString().padStart(2, '0') + '/' + 
+                            today.getFullYear();
+
+            let grandTotal = 0;
+
+            let html = `
+                <div class="receipt-header">
+                    <div class="top-bar">
+                        <span>Cash Memo</span>
+                        <span>Mob.: 9155745145</span>
+                    </div>
+                    <h2>SONE RESTAURANT</h2>
+                    <div class="address">DUMRAON STATION ROAD, DUMRAON</div>
+                    
+                    <div class="meta-bar">
+                        <span>No. ${billCounter}</span>
+                        <span>Date: ${dateStr}</span>
+                    </div>
+                </div>
+
+                <table class="receipt-table">
+                    <thead>
+                        <tr>
+                            <th style="text-align: center; width: 10%;">Sl.</th>
+                            <th style="text-align: left; width: 50%;">PARTICULARS</th>
+                            <th style="text-align: center; width: 15%;">QTY</th>
+                            <th style="text-align: right; width: 25%;">Amount<br>Rs.</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            // Added Sl. No. logic here
+            billItems.forEach((item, index) => {
+                html += `
+                    <tr>
+                        <td style="text-align: center;">${index + 1}</td>
+                        <td>${item.name}</td>
+                        <td style="text-align: center;">${item.qty}</td>
+                        <td style="text-align: right;">${item.total.toFixed(2)}</td>
+                    </tr>
+                `;
+                grandTotal += item.total;
+            });
+
+            // Maintain some padding rows so it looks like a real memo pad
+            for(let i=0; i < (7 - billItems.length); i++) {
+                 html += `<tr><td>&nbsp;</td><td></td><td></td><td></td></tr>`;
+            }
+
+            html += `
+                    </tbody>
+                </table>
+                <div class="receipt-total">
+                    <span>Total</span>
+                    <span>${grandTotal.toFixed(2)}</span>
+                </div>
+                <div class="receipt-footer">
+                    <span>Signature</span>
+                </div>
+            `;
+
+            printDiv.innerHTML = html;
+            
+            window.print();
+            
+            billCounter++; // Next bill will be 2, then 3, etc.
+        }
+    </script>
+</body>
+</html>
