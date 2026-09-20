@@ -8,385 +8,200 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <style>
         :root {
-            /* Apple iOS Style Color Palette */
-            --ios-bg: #F2F2F7;
-            --ios-card: #FFFFFF;
-            --ios-text: #1C1C1E;
-            --ios-text-muted: #8E8E93;
-            --ios-orange: #FF9500;
-            --ios-orange-grad: linear-gradient(135deg, #FF9500 0%, #FF5E3A 100%);
-            --ios-green: #34C759;
-            --ios-red: #FF3B30;
-            --ios-blue: #007AFF;
-            --ios-input-bg: rgba(118, 118, 128, 0.12);
-            --ios-separator: rgba(60, 60, 67, 0.1);
-            
-            --radius-card: 16px;
-            --radius-btn: 12px;
-            --radius-input: 10px;
-            --shadow-soft: 0 4px 14px rgba(0,0,0,0.05);
+            --ios-bg: #F2F2F7; --ios-card: #FFFFFF; --ios-text: #1C1C1E; --ios-text-muted: #8E8E93;
+            --ios-orange: #FF9500; --ios-orange-grad: linear-gradient(135deg, #FF9500 0%, #FF5E3A 100%);
+            --ios-green: #34C759; --ios-red: #FF3B30; --ios-blue: #007AFF;
+            --ios-input-bg: rgba(118, 118, 128, 0.12); --ios-separator: rgba(60, 60, 67, 0.1);
+            --radius-card: 16px; --radius-btn: 12px; --radius-input: 10px; --shadow-soft: 0 4px 14px rgba(0,0,0,0.05);
         }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
-            background-color: var(--ios-bg);
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-            color: var(--ios-text);
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* --- SIDEBAR --- */
-        .sidebar {
-            width: 260px;
-            background-color: #FFFFFF;
-            color: var(--ios-text);
-            box-shadow: 2px 0 15px rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
-            transition: left 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            z-index: 1000;
-        }
-
-        .sidebar-header {
-            padding: 30px 20px 20px 20px;
-            text-align: center;
-            border-bottom: 1px solid var(--ios-separator);
-        }
-        
-        .sidebar-header h2 { 
-            margin: 0; font-size: 18px; font-family: 'Montserrat', sans-serif; font-weight: 800; color: var(--ios-text);
-        }
-
-        .nav-links { list-style: none; padding: 15px 10px; margin: 0; overflow-y: auto; }
-        .nav-links li { margin-bottom: 4px; }
-        .nav-links a {
-            display: flex; align-items: center; padding: 12px 15px; color: var(--ios-text);
-            text-decoration: none; font-weight: 500; font-size: 15px; border-radius: var(--radius-btn);
-            transition: all 0.2s ease; cursor: pointer;
-        }
-        .nav-links a i { margin-right: 15px; width: 20px; text-align: center; font-size: 16px; color: var(--ios-text-muted);}
-        .nav-links a:hover { background-color: var(--ios-bg); }
-        .nav-links a.active { background: var(--ios-orange-grad); color: #fff; box-shadow: 0 4px 10px rgba(255, 149, 0, 0.3); }
-        .nav-links a.active i { color: #fff; }
-
-        /* --- MAIN CONTENT --- */
-        .main-content {
-            flex: 1; display: flex; flex-direction: column; overflow-y: auto; position: relative; background-color: var(--ios-bg);
-        }
-
-        .top-header {
-            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            padding: 12px 20px; display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid var(--ios-separator); position: sticky; top: 0; z-index: 100;
-        }
-
-        .menu-btn { display: none; background: transparent; color: var(--ios-orange); border: none; padding: 5px; cursor: pointer; font-size: 22px; }
-
-        /* --- BRANDING --- */
-        .brand-banner {
-            text-align:center; margin: 20px 20px 5px;
-        }
-        .brand-banner h1 { font-family: 'Montserrat', sans-serif; font-size:24px; font-weight:800; color:var(--ios-text); margin:0 0 5px 0;}
+        body { font-family: -apple-system, BlinkMacSystemFont, "Poppins", sans-serif; margin: 0; background-color: var(--ios-bg); color: var(--ios-text); }
+        .top-header { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--ios-separator); position: sticky; top: 0; z-index: 100; }
+        .brand-banner { text-align:center; margin: 20px 20px 15px; }
+        .brand-banner h1 { font-family: 'Montserrat', sans-serif; font-size:26px; font-weight:800; color:var(--ios-text); margin:0 0 5px 0;}
         .brand-banner p { font-size:13px; font-weight:500; color:var(--ios-text-muted); margin:0; }
-
-        /* --- TABS --- */
-        .tab-panel { display: none; padding: 10px 20px 20px; animation: fadeScale 0.3s ease; }
-        .tab-panel.active { display: block; }
-        @keyframes fadeScale { 0% { opacity: 0; transform: scale(0.98); } 100% { opacity: 1; transform: scale(1); } }
-
-        /* --- BILLING LAYOUT --- */
-        .billing-grid { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 15px;}
-        .input-section, .bill-section {
-            background: var(--ios-card); border-radius: var(--radius-card); padding: 20px; box-shadow: var(--shadow-soft);
-        }
-        .input-section { flex: 1; min-width: 280px; }
-        .bill-section { flex: 2; min-width: 320px; display: flex; flex-direction: column;}
-
-        h3.section-title { margin: 0 0 15px 0; font-size: 18px; color: var(--ios-text); font-weight: 700; border-bottom: 1px solid var(--ios-separator); padding-bottom: 10px;}
-
+        .billing-grid { display: flex; gap: 20px; flex-wrap: wrap; margin: 0 20px 20px;}
+        .card { background: var(--ios-card); border-radius: var(--radius-card); padding: 20px; box-shadow: var(--shadow-soft); flex: 1; min-width: 300px; }
+        h3.section-title { margin: 0 0 15px 0; font-size: 18px; color: var(--ios-text); font-weight: 700; border-bottom: 1px solid var(--ios-separator); padding-bottom: 10px; display:flex; align-items:center; gap:8px;}
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 13px; color: var(--ios-text-muted); }
-        input[type="text"], input[type="number"], input[type="date"] {
-            width: 100%; padding: 12px; border: none; border-radius: var(--radius-input); background: var(--ios-input-bg);
-            box-sizing: border-box; font-size: 16px; font-family: inherit; color: var(--ios-text);
-        }
-        input[type="text"]:focus, input[type="number"]:focus, input[type="date"]:focus { outline: none; background: rgba(118, 118, 128, 0.18); }
-
-        .btn-add { background: var(--ios-blue); color: white; border: none; padding: 14px; border-radius: var(--radius-btn); width: 100%; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.2s; margin-top: 10px;}
-        .btn-add:hover { transform: translateY(-2px); }
-
-        /* Autocomplete */
+        input[type="text"], input[type="number"] { width: 100%; padding: 12px; border: none; border-radius: var(--radius-input); background: var(--ios-input-bg); box-sizing: border-box; font-size: 16px; font-family: inherit; color: var(--ios-text); }
+        .btn-add { background: var(--ios-blue); color: white; border: none; padding: 14px; border-radius: var(--radius-btn); width: 100%; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 10px; transition:0.2s;}
+        .btn-add:hover { background: #005ecb; }
         .autocomplete-container { position: relative; }
-        .autocomplete-items {
-            position: absolute; border: 1px solid var(--ios-separator); z-index: 99; top: 100%; left: 0; right: 0;
-            max-height: 200px; overflow-y: auto; background-color: var(--ios-card); border-radius: 8px; box-shadow: var(--shadow-soft);
-        }
-        .autocomplete-items div { padding: 12px; cursor: pointer; border-bottom: 1px solid var(--ios-separator); display: flex; justify-content: space-between; font-size: 14px; font-weight: 500;}
-        .autocomplete-items div:hover { background-color: var(--ios-bg); }
-        .item-price-preview { color: var(--ios-orange); font-weight: 700; }
-
-        /* Table */
-        .table-container { overflow-y: auto; max-height: 300px; margin-bottom: 20px; border-radius: 8px; border: 1px solid var(--ios-separator); }
-        table { width: 100%; border-collapse: collapse; font-size: 14px;}
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--ios-separator); }
-        th { background-color: #f8f9fa; color: var(--ios-text-muted); font-weight: 600; position: sticky; top: 0; }
-        .del-btn { color: white; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; }
-
-        /* Totals & Actions */
-        .total-box {
-            background: var(--ios-bg); padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; margin-top: auto;
-        }
-        .total-box span { font-weight: 700; font-size: 16px; color: var(--ios-text-muted);}
-        .total-box .amt { font-size: 24px; color: var(--ios-orange); }
-
+        .autocomplete-items { position: absolute; border: 1px solid var(--ios-separator); z-index: 99; top: 100%; left: 0; right: 0; max-height: 200px; overflow-y: auto; background-color: var(--ios-card); border-radius: 8px; box-shadow: var(--shadow-soft); }
+        .autocomplete-items div { padding: 12px; cursor: pointer; border-bottom: 1px solid var(--ios-separator); font-size: 14px; display:flex; justify-content:space-between;}
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th, td { padding: 12px 10px; text-align: left; border-bottom: 1px solid var(--ios-separator); }
+        th { color: var(--ios-text-muted); font-weight: 600; background: #f8f9fa; }
         .btn-group { display: flex; gap: 10px; margin-top: 15px; }
-        .btn-checkout { background: var(--ios-green); flex: 2; color: white; border: none; padding: 15px; border-radius: var(--radius-btn); font-weight: 600; font-size: 16px; cursor: pointer; }
-        .btn-clear { background: var(--ios-bg); flex: 1; color: var(--ios-red); border: none; padding: 15px; border-radius: var(--radius-btn); font-weight: 600; font-size: 15px; cursor: pointer; }
-
-        /* --- MODALS (CHECKOUT & PREVIEW) --- */
-        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
-        .modal-content {
-            background-color: var(--ios-card); margin: 5% auto; padding: 25px; border-radius: 20px; width: 90%; max-width: 400px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2); animation: fadeScale 0.3s ease; position: relative;
+        .btn-checkout { background: var(--ios-green); flex: 2; color: white; border: none; padding: 15px; border-radius: var(--radius-btn); font-weight: 600; font-size: 16px; cursor: pointer; display:flex; justify-content:center; align-items:center; gap:8px;}
+        .btn-clear { background: var(--ios-bg); flex: 1; color: var(--ios-red); border: none; padding: 15px; border-radius: var(--radius-btn); font-weight: 600; cursor: pointer; display:flex; justify-content:center; align-items:center; gap:8px;}
+        
+        /* MODAL STYLES */
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
+        .modal-content { background-color: var(--ios-card); margin: 5% auto; padding: 25px; border-radius: 20px; width: 90%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px;}
+        
+        /* THERMAL RECEIPT PREVIEW STYLE */
+        .receipt-preview {
+            background: #fff; border: 1px solid #ddd; padding: 20px; font-family: 'Courier New', Courier, monospace;
+            font-size: 12px; color: #000; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 20px;
         }
-        .modal-title { margin: 0 0 20px 0; font-size: 20px; text-align: center; color: var(--ios-text); font-weight: 700; }
-        
-        .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;}
-        .modal-total { text-align: center; font-size: 28px; font-weight: 800; color: var(--ios-orange); margin-bottom: 20px;}
-        
-        .modal-footer { display: flex; gap: 10px; margin-top: 25px; }
-        .btn-confirm { background: var(--ios-blue); color: white; flex: 1; padding: 14px; border: none; border-radius: var(--radius-btn); font-weight: 600; font-size: 16px; cursor: pointer;}
-        .btn-cancel { background: var(--ios-bg); color: var(--ios-text); flex: 1; padding: 14px; border: none; border-radius: var(--radius-btn); font-weight: 600; font-size: 16px; cursor: pointer;}
+        .receipt-preview h2 { margin: 0 0 5px; font-size: 18px; text-align: center; border-bottom: 1px dashed #000; padding-bottom: 10px;}
+        .receipt-preview table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .receipt-preview th, .receipt-preview td { border-bottom: 1px dashed #ddd; padding: 6px 0; background: none; }
+        .receipt-preview th { font-weight: bold; color: #000; }
+        .receipt-preview .totals { border-top: 1px dashed #000; padding-top: 10px; margin-top: 10px; font-weight: bold; }
+        .receipt-preview .totals div { display: flex; justify-content: space-between; margin-bottom: 5px; }
 
-        .udhaar-alert { text-align: center; font-size: 16px; font-weight: 700; color: var(--ios-red); margin-top: 10px; padding: 10px; background: var(--danger-light); border-radius: 8px;}
+        /* SIDEBAR */
+        .sidebar { width: 260px; background-color: #FFFFFF; position: fixed; height: 100%; left: -260px; top: 0; z-index: 1001; transition: 0.3s; }
+        .sidebar.show { left: 0; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 1000; display: none; }
+        .overlay.show { display: block; }
+        .nav-links { list-style: none; padding: 15px 10px; margin: 0; }
+        .nav-links a { display: flex; align-items: center; padding: 12px 15px; color: var(--ios-text); text-decoration: none; font-weight: 500; font-size: 15px; border-radius: var(--radius-btn); cursor: pointer; }
+        .nav-links a.active { background: var(--ios-orange-grad); color: #fff; }
+        .tab-panel { display: none; padding: 10px 20px; }
+        .tab-panel.active { display: block; }
 
-        /* --- PRINT STYLES --- */
-        #print-area { display: none; }
-        
-        @media print {
-            @page { margin: 0; size: auto; }
-            body, html { background-color: white; margin: 0; padding: 0; min-height: auto !important; }
-            
-            /* HIDE EVERYTHING EXCEPT PRINT AREA */
-            .main-content, .sidebar, .overlay, .modal { display: none !important; }
-            
-            #print-area {
-                display: block !important; width: 100%; max-width: 80mm; margin: 0 auto; background-color: #fff !important; 
-                padding: 15px 10px; color: #000; font-family: monospace; box-sizing: border-box; font-size: 12px;
-            }
-            .print-header { text-align: center; margin-bottom: 10px; border-bottom: 1px dashed #000; padding-bottom: 10px;}
-            .print-header h2 { margin: 0; font-size: 20px; text-transform: uppercase; font-family: sans-serif; font-weight: bold;}
-            .print-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+        /* --- PRINT CSS (Hides everything except print area) --- */
+        @media print { 
+            body * { visibility: hidden; } 
+            #print-area, #print-area * { visibility: visible; } 
+            #print-area { position: absolute; left: 0; top: 0; width: 100%; font-family: 'Courier New', Courier, monospace; font-size: 12px; color: #000; background: #fff; padding: 10px;} 
+            .print-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
             .print-table th, .print-table td { border-bottom: 1px dashed #ccc; padding: 6px 0; text-align: left; }
             .print-table th:last-child, .print-table td:last-child { text-align: right; }
-            .print-summary { border-top: 1px dashed #000; padding-top: 5px; margin-top: 5px; }
-            .print-row { display: flex; justify-content: space-between; margin-bottom: 4px; font-weight: bold;}
-        }
-
-        /* MOBILE RESPONSIVE */
-        @media (max-width: 900px) {
-            .sidebar { position: fixed; left: -260px; height: 100%; }
-            .sidebar.show { left: 0; }
-            .menu-btn { display: block; }
-            .billing-grid { flex-direction: column; }
         }
     </style>
 </head>
 <body>
-
-    <!-- OVERLAY -->
-    <div class="overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
-
-    <!-- SIDEBAR -->
-    <div class="sidebar" id="appSidebar">
-        <div class="sidebar-header">
-            <i class="fas fa-utensils" style="font-size: 24px; margin-bottom: 8px; color: var(--ios-orange);"></i>
-            <h2>Sone Restaurant</h2>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+    <div class="sidebar" id="sidebar">
+        <div style="padding: 20px; text-align: center; border-bottom: 1px solid #eee;">
+            <i class="fas fa-utensils" style="font-size: 24px; color:var(--ios-orange); margin-bottom:10px;"></i>
+            <h2 style="margin:0; font-family:'Montserrat';">Sone Restaurant</h2>
         </div>
         <ul class="nav-links">
-            <li><a class="active" onclick="openTab('billingTab', this)"><i class="fas fa-receipt"></i> Bill Receipt</a></li>
-            <li><a onclick="openTab('historyTab', this)"><i class="fas fa-history"></i> Daily History</a></li>
+            <li><a class="active" onclick="openTab('billingTab', this)"><i class="fas fa-receipt" style="margin-right:10px;"></i> Bill Receipt</a></li>
+            <li><a onclick="openTab('historyTab', this)"><i class="fas fa-history" style="margin-right:10px;"></i> History</a></li>
         </ul>
     </div>
 
-    <div class="main-content">
-        <div class="top-header">
-            <button class="menu-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
-            <div style="font-weight: 600; color: var(--ios-text-muted); font-size:14px;"><i class="far fa-calendar-alt"></i> <span id="displayDate"></span></div>
-        </div>
+    <div class="top-header">
+        <button onclick="toggleSidebar()" style="background:transparent; border:none; font-size:22px; color:var(--ios-orange); cursor:pointer;"><i class="fas fa-bars"></i></button>
+        <div style="font-weight: 600; color: var(--ios-text-muted); font-size:14px;"><i class="far fa-calendar-alt"></i> <span id="displayDate"></span></div>
+    </div>
+    
+    <div class="brand-banner">
+        <h1>Sone Restaurant</h1>
+        <p><i class="fas fa-map-marker-alt" style="color:var(--ios-orange);"></i> Dumraon Station Road, Dumraon</p>
+    </div>
 
-        <div class="brand-banner">
-            <h1>Sone Restaurant</h1>
-            <p><i class="fas fa-map-marker-alt" style="color:var(--ios-orange);"></i> Dumraon Station Road, Dumraon</p>
-        </div>
-
-        <!-- TAB 1: BILLING DASHBOARD -->
-        <div id="billingTab" class="tab-panel active">
-            <div class="billing-grid">
-                <!-- Add Item -->
-                <div class="input-section">
-                    <h3 class="section-title"><i class="fas fa-search"></i> Add Item</h3>
-                    <div class="form-group autocomplete-container">
-                        <label>Item Name (सर्च करें)</label>
-                        <input type="text" id="itemInput" placeholder="उदा: Water, Paneer..." autocomplete="off">
-                        <div id="autocompleteList" class="autocomplete-items"></div>
-                    </div>
-                    <div class="form-group">
-                        <label>Price (₹)</label>
-                        <input type="number" id="priceInput" readonly style="background-color: #e9ecef; color:#888;">
-                    </div>
-                    <div class="form-group">
-                        <label>Quantity</label>
-                        <input type="number" id="qtyInput" value="1" min="1">
-                    </div>
-                    <button class="btn-add" onclick="addItemToBill()">Add to Bill</button>
+    <!-- BILLING TAB -->
+    <div id="billingTab" class="tab-panel active">
+        <div class="billing-grid">
+            <div class="card">
+                <h3 class="section-title"><i class="fas fa-search" style="color:var(--ios-blue);"></i> Add Item</h3>
+                <div class="form-group autocomplete-container">
+                    <label>Item Name (सर्च करें)</label>
+                    <input type="text" id="itemInput" placeholder="उदा: Mutton, Water..." autocomplete="off">
+                    <div id="autocompleteList" class="autocomplete-items"></div>
                 </div>
-
-                <!-- Current Bill -->
-                <div class="bill-section">
-                    <h3 class="section-title"><i class="fas fa-file-invoice"></i> Current Bill</h3>
-                    <div class="table-container">
-                        <table id="billTable">
-                            <thead><tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th><th style="width:40px;"></th></tr></thead>
-                            <tbody id="billBody"></tbody>
-                        </table>
-                    </div>
-                    <div class="total-box">
-                        <span>Grand Total:</span>
-                        <span class="amt">₹ <span id="grandTotal">0</span></span>
-                    </div>
-                    <div class="btn-group">
-                        <button class="btn-clear" onclick="clearBill()"><i class="fas fa-trash-alt"></i> Clear</button>
-                        <button class="btn-checkout" onclick="openCheckoutModal()">Checkout & Print <i class="fas fa-arrow-right"></i></button>
-                    </div>
-                </div>
+                <div class="form-group"><label>Price (₹)</label><input type="number" id="priceInput" readonly style="opacity: 0.7;"></div>
+                <div class="form-group"><label>Quantity</label><input type="number" id="qtyInput" value="1" min="1"></div>
+                <button class="btn-add" onclick="addItemToBill()"><i class="fas fa-plus"></i> Add to Bill</button>
             </div>
-        </div>
 
-        <!-- TAB 2: HISTORY SECTION -->
-        <div id="historyTab" class="tab-panel">
-            <div class="dashboard-card" style="margin-top: 15px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--ios-separator); padding-bottom:15px; margin-bottom:15px;">
-                    <h3 class="section-title" style="margin:0; border:none; padding:0;"><i class="fas fa-history"></i> आज का हिसाब</h3>
-                    <input type="date" id="filterDate" onchange="loadHistory()" style="padding:6px; border-radius:8px; border:1px solid #ccc; font-family:inherit;">
-                </div>
-                <div style="display:flex; gap:15px; margin-bottom:15px;">
-                    <div style="flex:1; background:var(--ios-bg); padding:15px; border-radius:10px; text-align:center;">
-                        <div style="font-size:12px; color:var(--ios-text-muted); font-weight:600;">Total Bills</div>
-                        <div style="font-size:20px; font-weight:700; color:var(--ios-text);" id="dayBillCount">0</div>
-                    </div>
-                    <div style="flex:1; background:var(--ios-green); padding:15px; border-radius:10px; text-align:center; color:white;">
-                        <div style="font-size:12px; font-weight:600;">Total Sales (Receipts)</div>
-                        <div style="font-size:20px; font-weight:700;">₹ <span id="dayTotalSale">0</span></div>
-                    </div>
-                </div>
-                <div class="table-container" style="max-height: 400px; border:none;">
-                    <table style="font-size: 13px;">
-                        <thead><tr><th>Bill No.</th><th>Time</th><th>Total</th><th style="text-align:center;">Action</th></tr></thead>
-                        <tbody id="historyBody"></tbody>
+            <div class="card" style="display:flex; flex-direction:column;">
+                <h3 class="section-title"><i class="fas fa-file-invoice" style="color:var(--ios-orange);"></i> Current Bill</h3>
+                <div style="overflow-y:auto; max-height:250px; margin-bottom:15px; border-bottom:1px solid #ccc;">
+                    <table id="billTable">
+                        <thead><tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th><th>X</th></tr></thead>
+                        <tbody id="billBody"></tbody>
                     </table>
                 </div>
+                <div style="display:flex; justify-content:space-between; font-size:18px; font-weight:bold; margin-top:auto;">
+                    <span>Grand Total:</span><span style="color:var(--ios-green);">₹ <span id="grandTotal">0</span></span>
+                </div>
+                <div class="btn-group">
+                    <button class="btn-clear" onclick="clearBill()"><i class="fas fa-trash-alt"></i> Clear</button>
+                    <button class="btn-checkout" onclick="openCheckoutModal()"><i class="fas fa-print"></i> Print</button>
+                </div>
             </div>
         </div>
+    </div>
 
+    <!-- HISTORY TAB -->
+    <div id="historyTab" class="tab-panel">
+        <div class="card">
+            <h3 class="section-title"><i class="fas fa-history" style="color:var(--ios-blue);"></i> आज का हिसाब</h3>
+            <input type="date" id="filterDate" onchange="loadHistory()" style="padding:10px; margin-bottom:15px; width:100%; border:none; background:var(--ios-input-bg); border-radius:10px; font-family:inherit;">
+            <div style="overflow-y:auto; max-height:400px;">
+                <table>
+                    <thead><tr><th>Bill No.</th><th>Total</th><th style="text-align:center;">Action</th></tr></thead>
+                    <tbody id="historyBody"></tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
     <!-- CHECKOUT MODAL -->
     <div id="checkoutModal" class="modal">
         <div class="modal-content">
-            <h3 class="modal-title">Complete Payment</h3>
-            <div class="modal-total">₹ <span id="modalGrandTotal">0</span></div>
-            
-            <p style="font-size:12px; text-align:center; color:var(--ios-text-muted); margin-top:-10px; margin-bottom:15px;">
-                यह डेटा आटोमेटिक ERP में सेव हो जाएगा।
-            </p>
+            <h3 style="margin: 0 0 10px 0; text-align: center; color:var(--ios-text); font-family:'Montserrat';">Complete Payment</h3>
+            <div style="text-align: center; font-size: 28px; font-weight: 800; color: var(--ios-green); margin-bottom: 20px;">₹ <span id="modalGrandTotal">0</span></div>
 
-            <div class="form-group">
-                <label>Customer Name (उधार के लिए नाम ज़रूरी है)</label>
-                <input type="text" id="chkName" placeholder="नाम लिखें (Optional)">
-            </div>
-            
+            <div class="form-group"><label>Customer Name (उधार के लिए)</label><input type="text" id="chkName" placeholder="नाम लिखें (Optional)"></div>
             <div class="modal-grid">
-                <div class="form-group" style="margin:0;">
-                    <label>Cash Paid (₹)</label>
-                    <input type="number" id="chkCash" oninput="calcUdhaar()">
-                </div>
-                <div class="form-group" style="margin:0;">
-                    <label>Online Paid (₹)</label>
-                    <input type="number" id="chkOnline" value="0" oninput="calcUdhaar()">
-                </div>
+                <div class="form-group"><label>Cash Paid</label><input type="number" id="chkCash" oninput="calcUdhaar()"></div>
+                <div class="form-group"><label>Online Paid</label><input type="number" id="chkOnline" value="0" oninput="calcUdhaar()"></div>
             </div>
-            
-            <div class="form-group" style="margin-top:15px;">
-                <label>Discount (₹)</label>
-                <input type="number" id="chkDiscount" value="0" oninput="calcUdhaar()">
-            </div>
-
-            <div class="udhaar-alert" id="udhaarAlert" style="display:none;">
-                Balance (उधार): ₹ <span id="chkUdhaar">0</span>
-            </div>
-
-            <div class="modal-footer">
-                <button class="btn-cancel" onclick="closeCheckoutModal()">Cancel</button>
-                <button class="btn-confirm" onclick="confirmCheckout()"><i class="fas fa-print"></i> Save & Print</button>
+            <div class="form-group"><label>Discount</label><input type="number" id="chkDiscount" value="0" oninput="calcUdhaar()"></div>
+            <div id="udhaarAlert" style="display:none; text-align:center; font-weight:bold; color:var(--ios-red); margin-bottom:15px;">Balance (उधार): ₹ <span id="chkUdhaar">0</span></div>
+            <div style="display:flex; gap:10px;">
+                <button class="btn-clear" onclick="document.getElementById('checkoutModal').style.display='none'" style="flex:1;">Cancel</button>
+                <button class="btn-checkout" onclick="confirmCheckout()" style="flex:1;"><i class="fas fa-check-circle"></i> Save</button>
             </div>
         </div>
     </div>
 
     <!-- PREVIEW MODAL -->
     <div id="previewModal" class="modal">
-        <div class="modal-content" style="max-width: 350px;">
-            <h3 class="modal-title" style="margin-bottom: 15px;">Bill Preview</h3>
-            
-            <div id="previewReceiptBox" style="background:#fff; border:1px solid #ccc; padding:15px; font-family:monospace; font-size:12px; margin-bottom:20px; color:#000;">
-                <!-- Preview content will be injected here -->
+        <div class="modal-content" style="max-width: 350px; background: #f8f9fa;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                <h3 style="margin:0; font-family:'Montserrat';"><i class="fas fa-eye" style="color:var(--ios-blue);"></i> Bill Preview</h3>
+                <i class="fas fa-times" style="font-size:20px; color:#aaa; cursor:pointer;" onclick="closePreviewModal()"></i>
             </div>
             
-            <div class="modal-footer" style="margin-top: 10px;">
-                <button class="btn-cancel" onclick="closePreviewModal()">Close</button>
-                <button class="btn-confirm" onclick="printFromPreview()"><i class="fas fa-print"></i> Print</button>
+            <div id="previewReceiptBox" class="receipt-preview">
+                <!-- Data will be injected here -->
             </div>
+            
+            <button class="btn-checkout" style="width:100%;" onclick="printFromPreview()"><i class="fas fa-print"></i> Print Bill</button>
         </div>
     </div>
 
-    <!-- PRINT AREA -->
     <div id="print-area"></div>
 
     <script>
-        // --- UI LOGIC ---
-        function toggleSidebar() {
-            document.getElementById('appSidebar').classList.toggle('show');
-            document.getElementById('sidebarOverlay').classList.toggle('show');
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('show'); document.getElementById('overlay').classList.toggle('show'); }
+        function openTab(tabId, el) { 
+            document.querySelectorAll('.tab-panel').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-links a').forEach(l => l.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active'); el.classList.add('active'); toggleSidebar();
         }
 
-        function openTab(tabId, element) {
-            document.querySelectorAll('.tab-panel').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.nav-links a').forEach(link => link.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            element.classList.add('active');
-            document.getElementById('appSidebar').classList.remove('show');
-            document.getElementById('sidebarOverlay').classList.remove('show');
-        }
-
-        // Setup Date
         let today = new Date();
-        let yyyy = today.getFullYear();
-        let mm = String(today.getMonth() + 1).padStart(2, '0');
-        let dd = String(today.getDate()).padStart(2, '0');
-        let formattedDate = `${yyyy}-${mm}-${dd}`;
-        let displayDate = `${dd}/${mm}/${yyyy}`;
-        
+        let displayDate = `${String(today.getDate()).padStart(2, '0')}/${String(today.getMonth() + 1).padStart(2, '0')}/${today.getFullYear()}`;
         document.getElementById('displayDate').innerText = displayDate;
-        document.getElementById('filterDate').value = formattedDate;
 
-        // MENU DATA (Added Water & Thanda)
+        // MENU DATA (Added Mutton Items)
         const menuData = {
+            "Mutton Spl. (8 Pic)": 650, "Mutton Estu (2 Pic)": 220, "Mutton Curry (4 Pic)": 300, "Mutton Do Pyaza (4 Pic)": 320,
             "Water Bottle 20": 20, "Water Bottle 30": 30, "Water Bottle 35": 35,
             "Thanda 40": 40, "Thanda 45": 45, "Thanda 50": 50, "Thanda 60": 60, "Thanda 90": 90,
             "Veg. Fried Rice": 170, "Egg Fried Rice": 190, "Chi. Fried Rice": 260, "Mushroom Fried Rice": 250, "Mix. Fried Rice": 270, "Paneer Fried Rice": 250,
@@ -408,334 +223,150 @@
             "Mushroom Do Piyaza": 220, "Mushroom (B) Masala": 230, "Mushroom Masala": 230, "Mushroom Karahi": 240, "Mushroom Curry": 210, "Mushroom Estu": 220, "Mushroom Dehati": 300,
             "Veg. Chowmein (H)": 110, "Veg. Chowmein (F)": 190, "Chicken Chowmein": 270, "Egg Chowmein": 230, "Paneer Chowmein": 240, "Mix Chowmein": 260, "Mushroom Chowmein": 250
         };
-
         const itemNames = Object.keys(menuData);
-        let billItems = [];
-        let billCounter = 1; 
-        let currentPreviewBill = null;
+        let billItems = []; let billCounter = 1; let currentPreviewBill = null;
 
-        window.addEventListener('DOMContentLoaded', () => {
+        window.onload = function() {
+            let s = JSON.parse(localStorage.getItem('sone_bills_isolated')) || [];
+            if(s.filter(b=>b.date===displayDate).length > 0) { billCounter = Math.max(...s.map(b=>b.billNo))+1; }
             loadHistory();
-            let savedBills = JSON.parse(localStorage.getItem('sone_bills')) || [];
-            let todaysBills = savedBills.filter(b => b.date === displayDate);
-            if(todaysBills.length > 0) {
-                billCounter = Math.max(...todaysBills.map(b => b.billNo)) + 1;
-            }
-        });
+        }
 
-        // Autocomplete
         const input = document.getElementById("itemInput");
         const list = document.getElementById("autocompleteList");
-        const priceInput = document.getElementById("priceInput");
-
         input.addEventListener("input", function() {
-            let val = this.value;
-            list.innerHTML = ""; priceInput.value = "";
-            if (!val) { return false; }
-            for (let i = 0; i < itemNames.length; i++) {
-                if (itemNames[i].toLowerCase().includes(val.toLowerCase())) {
+            list.innerHTML = ""; document.getElementById("priceInput").value = "";
+            if (!this.value) return;
+            itemNames.forEach(i => {
+                if (i.toLowerCase().includes(this.value.toLowerCase())) {
                     let b = document.createElement("DIV");
-                    let regex = new RegExp(`(${val})`, "gi");
-                    let highlightedName = itemNames[i].replace(regex, "<strong>$1</strong>");
-                    b.innerHTML = `<span>${highlightedName}</span><span class="item-price-preview">₹ ${menuData[itemNames[i]]}</span><input type='hidden' value='${itemNames[i]}'>`;
+                    b.innerHTML = `<span>${i}</span><span style="color:var(--ios-orange); font-weight:bold;">₹ ${menuData[i]}</span><input type='hidden' value='${i}'>`;
                     b.addEventListener("click", function() {
                         input.value = this.getElementsByTagName("input")[0].value;
-                        priceInput.value = menuData[input.value];
-                        list.innerHTML = "";
-                        document.getElementById("qtyInput").focus();
+                        document.getElementById("priceInput").value = menuData[input.value];
+                        list.innerHTML = ""; document.getElementById("qtyInput").focus();
                     });
                     list.appendChild(b);
                 }
-            }
+            });
         });
-
-        document.addEventListener("click", function (e) { if (e.target !== input) { list.innerHTML = ""; } });
-        
+        document.addEventListener("click", e => { if(e.target !== input) list.innerHTML = ""; });
         input.addEventListener("keydown", function(e) {
             if (e.key === "Enter") {
-                e.preventDefault();
-                let exactMatch = itemNames.find(name => name.toLowerCase() === this.value.toLowerCase());
-                if(exactMatch) {
-                    this.value = exactMatch; priceInput.value = menuData[exactMatch]; list.innerHTML = "";
-                    document.getElementById("qtyInput").focus();
-                } else if(list.firstChild) { list.firstChild.click(); }
+                e.preventDefault(); let match = itemNames.find(n => n.toLowerCase() === this.value.toLowerCase());
+                if(match) { this.value = match; document.getElementById("priceInput").value = menuData[match]; list.innerHTML = ""; document.getElementById("qtyInput").focus(); }
             }
         });
-
-        document.getElementById("qtyInput").addEventListener("keydown", function(e) {
-            if (e.key === "Enter") { e.preventDefault(); addItemToBill(); }
-        });
+        document.getElementById("qtyInput").addEventListener("keydown", e => { if(e.key==="Enter") { e.preventDefault(); addItemToBill(); }});
 
         function addItemToBill() {
-            const name = document.getElementById("itemInput").value;
-            const price = parseFloat(document.getElementById("priceInput").value);
-            const qty = parseInt(document.getElementById("qtyInput").value);
-
-            if (!name || isNaN(price) || isNaN(qty) || qty <= 0) {
-                alert("Please select a valid item and enter quantity."); return;
-            }
-
-            const itemTotal = price * qty;
-            const existingItemIndex = billItems.findIndex(item => item.name === name);
-            if (existingItemIndex > -1) {
-                billItems[existingItemIndex].qty += qty;
-                billItems[existingItemIndex].total = billItems[existingItemIndex].qty * billItems[existingItemIndex].price;
-            } else {
-                billItems.push({ name: name, price: price, qty: qty, total: itemTotal });
-            }
-            updateBillDisplay();
-            
-            document.getElementById("itemInput").value = "";
-            document.getElementById("priceInput").value = "";
-            document.getElementById("qtyInput").value = "1";
-            document.getElementById("itemInput").focus();
+            let n = document.getElementById("itemInput").value, p = parseFloat(document.getElementById("priceInput").value), q = parseInt(document.getElementById("qtyInput").value);
+            if(!n || isNaN(p) || isNaN(q) || q<=0) return alert("Valid item select karein!");
+            let idx = billItems.findIndex(i => i.name === n);
+            if(idx > -1) { billItems[idx].qty += q; billItems[idx].total = billItems[idx].qty * billItems[idx].price; } else { billItems.push({name:n, price:p, qty:q, total:p*q}); }
+            updateBillDisplay(); document.getElementById("itemInput").value=""; document.getElementById("priceInput").value=""; document.getElementById("qtyInput").value="1"; document.getElementById("itemInput").focus();
         }
-
-        function removeItem(index) { billItems.splice(index, 1); updateBillDisplay(); }
 
         function updateBillDisplay() {
-            const tbody = document.getElementById("billBody");
-            tbody.innerHTML = "";
-            let grandTotal = 0;
-            billItems.forEach((item, index) => {
-                grandTotal += item.total;
-                tbody.innerHTML += `<tr><td>${item.name}</td><td>${item.qty}</td><td>${item.price}</td><td>${item.total}</td>
-                <td><button class="del-btn" style="background:var(--ios-red);" onclick="removeItem(${index})"><i class="fas fa-times"></i></button></td></tr>`;
+            let tb = document.getElementById("billBody"); tb.innerHTML = ""; let gt = 0;
+            billItems.forEach((i, idx) => {
+                gt += i.total;
+                tb.innerHTML += `<tr><td>${i.name}</td><td>${i.qty}</td><td>${i.price}</td><td style="font-weight:bold;">${i.total}</td><td><button style="background:var(--ios-red);color:white;border:none;border-radius:6px;padding:5px 8px;cursor:pointer;" onclick="billItems.splice(${idx},1);updateBillDisplay();"><i class="fas fa-trash"></i></button></td></tr>`;
             });
-            document.getElementById("grandTotal").innerText = grandTotal;
+            document.getElementById("grandTotal").innerText = gt;
         }
 
-        function clearBill() {
-            if(confirm("Clear order?")) { billItems = []; updateBillDisplay(); }
-        }
+        function clearBill() { if(confirm("Clear order?")) { billItems = []; updateBillDisplay(); } }
 
-        // --- CHECKOUT & ERP SYNC ---
         function openCheckoutModal() {
-            if (billItems.length === 0) { alert("Bill is empty!"); return; }
-            let grandTotal = billItems.reduce((sum, item) => sum + item.total, 0);
-            
-            document.getElementById('modalGrandTotal').innerText = grandTotal;
-            document.getElementById('chkCash').value = grandTotal; // Default full cash
-            document.getElementById('chkOnline').value = 0;
-            document.getElementById('chkDiscount').value = 0;
-            document.getElementById('chkName').value = '';
-            
-            calcUdhaar();
-            document.getElementById('checkoutModal').style.display = 'block';
+            if(billItems.length === 0) return alert("Bill khali hai!");
+            let gt = billItems.reduce((s,i) => s + i.total, 0);
+            document.getElementById('modalGrandTotal').innerText = gt;
+            document.getElementById('chkCash').value = gt; document.getElementById('chkOnline').value = 0; document.getElementById('chkDiscount').value = 0; document.getElementById('chkName').value = '';
+            calcUdhaar(); document.getElementById('checkoutModal').style.display = 'block';
         }
-
-        function closeCheckoutModal() { document.getElementById('checkoutModal').style.display = 'none'; }
 
         function calcUdhaar() {
             let gt = parseFloat(document.getElementById('modalGrandTotal').innerText) || 0;
             let cash = parseFloat(document.getElementById('chkCash').value) || 0;
             let online = parseFloat(document.getElementById('chkOnline').value) || 0;
             let disc = parseFloat(document.getElementById('chkDiscount').value) || 0;
-            
-            let balance = gt - disc - cash - online;
-            let alertBox = document.getElementById('udhaarAlert');
-            
-            if(balance > 0) {
-                document.getElementById('chkUdhaar').innerText = balance;
-                alertBox.style.display = 'block';
-            } else {
-                alertBox.style.display = 'none';
-            }
+            let bal = gt - disc - cash - online;
+            let a = document.getElementById('udhaarAlert');
+            if(bal > 0) { document.getElementById('chkUdhaar').innerText = bal; a.style.display = 'block'; } else { a.style.display = 'none'; }
         }
 
         function confirmCheckout() {
-            let gt = parseFloat(document.getElementById('modalGrandTotal').innerText) || 0;
-            let cash = parseFloat(document.getElementById('chkCash').value) || 0;
-            let online = parseFloat(document.getElementById('chkOnline').value) || 0;
-            let disc = parseFloat(document.getElementById('chkDiscount').value) || 0;
+            let gt = parseFloat(document.getElementById('modalGrandTotal').innerText)||0, cash = parseFloat(document.getElementById('chkCash').value)||0, online = parseFloat(document.getElementById('chkOnline').value)||0, disc = parseFloat(document.getElementById('chkDiscount').value)||0;
             let name = document.getElementById('chkName').value.trim();
-            
-            let balance = gt - disc - cash - online;
-            
-            if (balance > 0 && name === '') {
-                alert("उधार के लिए ग्राहक का नाम लिखना ज़रूरी है!");
-                return;
-            }
+            let bal = gt - disc - cash - online;
+            if(bal > 0 && name === '') return alert("उधार के लिए नाम ज़रूरी है!");
 
-            // 1. Sync to ERP App Data
-            let erpData = JSON.parse(localStorage.getItem('sone_erp_v1')) || {};
-            if (!erpData[formattedDate]) {
-                erpData[formattedDate] = {
-                    market: [], costomer: [], staff: [], general: [], nanajiArr: [], tipArr: [], discountArr: [],
-                    online: 0, cash: 0, cashDiff: 0, counterCash: 0,
-                    water: { q20: 0, q30: 0, q35: 0, q40: 0, q45: 0, q50: 0, q60: 0, q90: 0, discount: 0 }
-                };
-            }
+            // ONLY LOCAL BILL HISTORY
+            let sb = JSON.parse(localStorage.getItem('sone_bills_isolated')) || [];
+            let nB = { id: Date.now(), billNo: billCounter, date: displayDate, time: new Date().toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit'}), items: JSON.parse(JSON.stringify(billItems)), total: gt, paid: cash+online, disc: disc, udhaar: bal>0?bal:0, custName: name };
+            sb.push(nB); localStorage.setItem('sone_bills_isolated', JSON.stringify(sb));
 
-            if (name !== '') {
-                erpData[formattedDate].costomer.push({
-                    name: name, cash: cash, online: online, discount: disc
-                });
-            } else {
-                erpData[formattedDate].cash += cash;
-                erpData[formattedDate].online += online;
-                if(disc > 0) {
-                    erpData[formattedDate].discountArr.push({ item: "Bill Discount", amt: disc });
-                }
-            }
-            
-            localStorage.setItem('sone_erp_v1', JSON.stringify(erpData));
-
-            // 2. Save Bill Local History
-            let timeNow = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-            let savedBills = JSON.parse(localStorage.getItem('sone_bills')) || [];
-            let newBillObj = {
-                id: Date.now(),
-                billNo: billCounter,
-                date: displayDate, 
-                time: timeNow,
-                items: JSON.parse(JSON.stringify(billItems)), 
-                total: gt,
-                paid: cash + online,
-                disc: disc,
-                udhaar: balance > 0 ? balance : 0,
-                custName: name
-            };
-            savedBills.push(newBillObj);
-            localStorage.setItem('sone_bills', JSON.stringify(savedBills));
-
-            // 3. Print
-            generatePrintHtml(newBillObj);
-            closeCheckoutModal();
-            setTimeout(() => { window.print(); }, 300); // 300ms delay ensures DOM is ready
-            
-            billCounter++; 
-            billItems = [];
-            updateBillDisplay();
-            loadHistory();
+            generatePrintHtml(nB);
+            document.getElementById('checkoutModal').style.display = 'none';
+            setTimeout(() => { window.print(); billCounter++; billItems=[]; updateBillDisplay(); loadHistory(); }, 300);
         }
 
-        // --- PREVIEW FUNCTIONS ---
         function openPreviewModal(id) {
-            let savedBills = JSON.parse(localStorage.getItem('sone_bills')) || [];
-            let bill = savedBills.find(b => b.id === id);
-            
+            let sb = JSON.parse(localStorage.getItem('sone_bills_isolated')) || [];
+            let bill = sb.find(b => b.id === id);
             if(bill) {
                 currentPreviewBill = bill;
-                
-                let html = `
-                    <div style="text-align: center; border-bottom: 1px dashed #000; padding-bottom: 10px; margin-bottom: 10px;">
-                        <h2 style="margin: 0; font-size: 18px; font-family: sans-serif;">SONE RESTAURANT</h2>
-                        <div>Station Road, Dumraon</div>
-                        <div style="display:flex; justify-content:space-between; margin-top:5px;">
-                            <span>Bill No: ${bill.billNo}</span>
-                            <span>Date: ${bill.date}</span>
-                        </div>
-                        ${bill.custName ? `<div style="text-align:left; margin-top:5px;">Name: ${bill.custName}</div>` : ''}
-                    </div>
-                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
-                        <tr><th style="text-align:left; border-bottom:1px dashed #ccc;">Item</th><th style="text-align:center; border-bottom:1px dashed #ccc;">Qty</th><th style="text-align:right; border-bottom:1px dashed #ccc;">Amt</th></tr>
-                `;
-                bill.items.forEach(item => {
-                    html += `<tr><td style="padding:4px 0; border-bottom:1px dashed #eee;">${item.name}</td><td style="text-align:center; border-bottom:1px dashed #eee;">${item.qty}</td><td style="text-align:right; border-bottom:1px dashed #eee;">${item.total}</td></tr>`;
-                });
-                
-                html += `</table><div style="border-top: 1px dashed #000; padding-top: 5px; font-weight: bold;">`;
-                html += `<div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Subtotal:</span><span>₹ ${bill.total}</span></div>`;
-                if(bill.disc > 0) html += `<div style="display:flex; justify-content:space-between; margin-bottom:4px; color:var(--ios-red);"><span>Discount:</span><span>- ₹ ${bill.disc}</span></div>`;
-                if(bill.paid > 0) html += `<div style="display:flex; justify-content:space-between; margin-bottom:4px; color:var(--ios-green);"><span>Paid:</span><span>₹ ${bill.paid}</span></div>`;
-                if(bill.udhaar > 0) html += `<div style="display:flex; justify-content:space-between; margin-bottom:4px; color:var(--ios-orange);"><span>Balance:</span><span>₹ ${bill.udhaar}</span></div>`;
-                html += `</div>`;
+                let html = `<div style="text-align:center; border-bottom:1px dashed #000; padding-bottom:10px;">
+                <h2 style="margin:0; font-family:sans-serif; font-size:18px;">SONE RESTAURANT</h2><div>Station Road, Dumraon</div>
+                <div style="display:flex;justify-content:space-between;margin-top:5px;"><span>Bill No: ${bill.billNo}</span><span>Date: ${bill.date}</span></div>
+                ${bill.custName?`<div style="text-align:left;">Name: ${bill.custName}</div>`:''}</div>
+                <table style="width:100%; border-collapse:collapse; margin-top:10px;"><tr><th style="text-align:left;border-bottom:1px dashed #ccc;">Item</th><th>Qty</th><th style="text-align:right;border-bottom:1px dashed #ccc;">Amt</th></tr>`;
+                bill.items.forEach(i => html += `<tr><td style="border-bottom:1px dashed #eee; padding:4px 0;">${i.name}</td><td style="text-align:center;border-bottom:1px dashed #eee;">${i.qty}</td><td style="text-align:right;border-bottom:1px dashed #eee;">${i.total}</td></tr>`);
+                html += `</table><div style="border-top:1px dashed #000; padding-top:5px; font-weight:bold;">
+                <div style="display:flex;justify-content:space-between;"><span>Subtotal:</span><span>₹ ${bill.total}</span></div>`;
+                if(bill.disc>0) html += `<div style="display:flex;justify-content:space-between; color:red;"><span>Discount:</span><span>- ₹ ${bill.disc}</span></div>`;
+                if(bill.paid>0) html += `<div style="display:flex;justify-content:space-between; color:green;"><span>Paid:</span><span>₹ ${bill.paid}</span></div>`;
+                if(bill.udhaar>0) html += `<div style="display:flex;justify-content:space-between; color:orange;"><span>Balance:</span><span>₹ ${bill.udhaar}</span></div>`;
+                html += `</div><div style="text-align:center; margin-top:10px; font-weight:bold;">Thank You!</div>`;
                 
                 document.getElementById('previewReceiptBox').innerHTML = html;
                 document.getElementById('previewModal').style.display = 'block';
             }
         }
-
-        function closePreviewModal() {
-            document.getElementById('previewModal').style.display = 'none';
-            currentPreviewBill = null;
-        }
-
-        function printFromPreview() {
-            if(currentPreviewBill) {
-                generatePrintHtml(currentPreviewBill);
-                closePreviewModal();
-                setTimeout(() => { window.print(); }, 300);
-            }
-        }
+        function closePreviewModal() { document.getElementById('previewModal').style.display = 'none'; currentPreviewBill = null; }
+        function printFromPreview() { if(currentPreviewBill) { generatePrintHtml(currentPreviewBill); closePreviewModal(); setTimeout(() => window.print(), 300); } }
 
         function generatePrintHtml(billData) {
-            const printDiv = document.getElementById("print-area");
-            let html = `
-                <div class="print-header">
-                    <h2>SONE RESTAURANT</h2>
-                    <div>Station Road, Dumraon | Mob: 9155745145</div>
-                    <div style="display:flex; justify-content:space-between; margin-top:5px;">
-                        <span>Bill No: ${billData.billNo}</span>
-                        <span>Date: ${billData.date}</span>
-                    </div>
-                    ${billData.custName ? `<div style="text-align:left; margin-top:5px;">Name: ${billData.custName}</div>` : ''}
-                </div>
-                <table class="print-table">
-                    <tr><th>Item</th><th style="text-align:center;">Qty</th><th>Amount</th></tr>
-            `;
-
-            billData.items.forEach(item => {
-                html += `<tr><td>${item.name}</td><td style="text-align:center;">${item.qty}</td><td>${item.total}</td></tr>`;
-            });
-
-            html += `</table><div class="print-summary">`;
-            html += `<div class="print-row"><span>Subtotal:</span><span>₹ ${billData.total}</span></div>`;
-            
-            if(billData.disc > 0) {
-                html += `<div class="print-row"><span>Discount:</span><span>- ₹ ${billData.disc}</span></div>`;
-            }
-            if(billData.paid > 0) {
-                html += `<div class="print-row"><span>Paid:</span><span>₹ ${billData.paid}</span></div>`;
-            }
-            if(billData.udhaar > 0) {
-                html += `<div class="print-row"><span>Balance (Udhaar):</span><span>₹ ${billData.udhaar}</span></div>`;
-            }
-
-            html += `</div><div style="text-align:center; margin-top:15px; font-weight:bold;">Thank You! Visit Again</div>`;
-            printDiv.innerHTML = html;
+            let pH = `<div class="print-header"><h2>SONE RESTAURANT</h2><div>Station Road, Dumraon</div>
+                <div style="display:flex;justify-content:space-between;margin-top:5px;"><span>Bill No: ${billData.billNo}</span><span>Date: ${billData.date}</span></div>
+                ${billData.custName?`<div style="text-align:left;">Name: ${billData.custName}</div>`:''}</div>
+                <table class="print-table"><tr><th style="text-align:left;">Item</th><th>Qty</th><th style="text-align:right;">Amt</th></tr>`;
+            billData.items.forEach(i => pH += `<tr><td>${i.name}</td><td style="text-align:center;">${i.qty}</td><td style="text-align:right;">${i.total}</td></tr>`);
+            pH += `</table><div style="border-top:1px dashed #000; padding-top:5px; font-weight:bold;">
+                <div style="display:flex;justify-content:space-between;"><span>Subtotal:</span><span>₹ ${billData.total}</span></div>`;
+            if(billData.disc>0) pH += `<div style="display:flex;justify-content:space-between;"><span>Discount:</span><span>- ₹ ${billData.disc}</span></div>`;
+            if(billData.paid>0) pH += `<div style="display:flex;justify-content:space-between;"><span>Paid:</span><span>₹ ${billData.paid}</span></div>`;
+            if(billData.udhaar>0) pH += `<div style="display:flex;justify-content:space-between;"><span>Balance:</span><span>₹ ${billData.udhaar}</span></div>`;
+            pH += `</div><div style="text-align:center; margin-top:15px; font-weight:bold;">Thank You!</div>`;
+            document.getElementById('print-area').innerHTML = pH;
         }
 
-        // --- HISTORY ---
         function loadHistory() {
-            let inputDateStr = document.getElementById('filterDate').value;
-            let displayD = "";
-            if(inputDateStr) {
-                let parts = inputDateStr.split('-');
-                displayD = `${parts[2]}/${parts[1]}/${parts[0]}`;
-            } else { displayD = displayDate; }
-            
-            let savedBills = JSON.parse(localStorage.getItem('sone_bills')) || [];
-            let filteredBills = savedBills.filter(bill => bill.date === displayD);
-            
-            const historyBody = document.getElementById("historyBody");
-            historyBody.innerHTML = "";
-            let totalSale = 0;
-
-            // Sort by newest first
-            filteredBills.reverse().forEach((bill) => {
-                totalSale += bill.total;
-                historyBody.innerHTML += `
-                    <tr>
-                        <td><b>#${bill.billNo}</b></td><td>${bill.time}</td><td>₹ ${bill.total}</td>
-                        <td style="text-align: center; display:flex; gap:5px; justify-content:center;">
-                            <button class="del-btn" style="background:var(--ios-blue);" onclick="openPreviewModal(${bill.id})" title="Preview & Print"><i class="fas fa-eye"></i></button>
-                            <button class="del-btn" style="background:var(--ios-red);" onclick="deleteSavedBill(${bill.id})" title="Delete"><i class="fas fa-trash"></i></button>
-                        </td>
-                    </tr>
-                `;
+            let sb = JSON.parse(localStorage.getItem('sone_bills_isolated')) || [];
+            let tb = document.getElementById("historyBody"); tb.innerHTML = "";
+            sb.reverse().forEach(b => {
+                tb.innerHTML += `<tr><td><b>#${b.billNo}</b></td><td style="font-weight:600; color:var(--ios-green);">₹ ${b.total}</td>
+                <td style="display:flex; gap:10px;">
+                    <button onclick="openPreviewModal(${b.id})" style="background:var(--ios-blue);color:white;border:none;padding:6px 12px;border-radius:8px;cursor:pointer;"><i class="fas fa-eye"></i></button>
+                    <button onclick="deleteBill(${b.id})" style="background:var(--ios-red);color:white;border:none;padding:6px 12px;border-radius:8px;cursor:pointer;"><i class="fas fa-trash"></i></button>
+                </td></tr>`;
             });
-            document.getElementById("dayBillCount").innerText = filteredBills.length;
-            document.getElementById("dayTotalSale").innerText = totalSale;
         }
-
-        function deleteSavedBill(id) {
-            if(confirm("Delete this bill history? (Note: ERP totals won't be changed automatically)")) {
-                let savedBills = JSON.parse(localStorage.getItem('sone_bills')) || [];
-                savedBills = savedBills.filter(bill => bill.id !== id);
-                localStorage.setItem('sone_bills', JSON.stringify(savedBills));
-                loadHistory(); 
+        function deleteBill(id) {
+            if(confirm("Delete bill history?")) {
+                let sb = JSON.parse(localStorage.getItem('sone_bills_isolated')) || [];
+                localStorage.setItem('sone_bills_isolated', JSON.stringify(sb.filter(b=>b.id!==id))); loadHistory();
             }
         }
     </script>
