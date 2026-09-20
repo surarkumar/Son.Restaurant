@@ -4,8 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sone Restaurant - Billing App</title>
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#d35400">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3135/3135696.png">
+
     <!-- FontAwesome for Beautiful Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
         :root {
             --primary-color: #d35400;
@@ -419,6 +428,12 @@
             font-family: monospace;
             font-size: 14px;
         }
+        
+        .install-highlight {
+            background-color: #f1c40f !important;
+            color: #333 !important;
+            border-left: 5px solid #e67e22 !important;
+        }
 
         /* --- PRINT RECEIPT STYLES --- */
         #print-area { display: none; }
@@ -532,6 +547,10 @@
         </a>
         <a href="#" id="link-history" onclick="openTab('historyTab', 'link-history')">
             <i class="fas fa-history"></i> History (हिसाब)
+        </a>
+        <!-- Install App Button (Hidden by default, shown via JS) -->
+        <a href="#" id="installAppBtn" class="install-highlight" style="display: none;" onclick="installApp()">
+            <i class="fas fa-download"></i> App Install Karein
         </a>
     </div>
 
@@ -656,6 +675,37 @@
     </div>
 
     <script>
+        /* --- PWA APP INSTALL & SERVICE WORKER LOGIC --- */
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                .then(reg => console.log('Service Worker Registered!'))
+                .catch(err => console.log('Service Worker Failed:', err));
+            });
+        }
+
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault(); // Prevent standard browser popup
+            deferredPrompt = e;
+            // Show our custom Install button in sidebar
+            document.getElementById('installAppBtn').style.display = 'block';
+        });
+
+        function installApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User installed the app');
+                    }
+                    deferredPrompt = null;
+                    document.getElementById('installAppBtn').style.display = 'none';
+                    toggleSidebar(); // Close sidebar after clicking
+                });
+            }
+        }
+
         // SIDEBAR AND TABS LOGIC
         function toggleSidebar() {
             document.getElementById("appSidebar").classList.toggle("open");
@@ -670,7 +720,7 @@
             }
             
             // Remove active class from all links
-            let links = document.querySelectorAll(".sidebar a");
+            let links = document.querySelectorAll(".sidebar a:not(#installAppBtn)");
             for (let i = 0; i < links.length; i++) {
                 links[i].classList.remove("active-link");
             }
