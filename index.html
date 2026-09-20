@@ -1,10 +1,11 @@
-
 <!DOCTYPE html>
 <html lang="hi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sone Restaurant - Billing App</title>
+    <!-- FontAwesome for Beautiful Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --primary-color: #d35400;
@@ -36,13 +37,103 @@
             padding: 20px;
             display: flex;
             flex-direction: column;
+            position: relative;
         }
 
+        /* --- SIDEBAR STYLES --- */
+        .sidebar {
+            height: 100%;
+            width: 260px;
+            position: fixed;
+            z-index: 1001;
+            top: 0;
+            left: -260px;
+            background-color: white;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.2);
+            overflow-x: hidden;
+            transition: left 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar.open { left: 0; }
+
+        .sidebar-header {
+            padding: 20px;
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            position: relative;
+        }
+        
+        .sidebar-header h2 { margin: 0; font-size: 20px; }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .sidebar a {
+            padding: 15px 20px;
+            text-decoration: none;
+            font-size: 16px;
+            color: var(--text-color);
+            display: block;
+            border-bottom: 1px solid #eee;
+            transition: 0.2s;
+            font-weight: bold;
+        }
+
+        .sidebar a i { margin-right: 10px; width: 20px; text-align: center; color: var(--primary-color); }
+
+        .sidebar a:hover, .sidebar a.active-link {
+            background-color: var(--background-color);
+            color: var(--primary-color);
+            border-left: 5px solid var(--primary-color);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .overlay.active { display: block; opacity: 1; }
+
+        /* --- HEADER STYLES --- */
         header {
             text-align: center;
             border-bottom: 2px solid var(--primary-color);
             padding-bottom: 15px;
             margin-bottom: 20px;
+            position: relative;
+        }
+
+        .menu-btn {
+            position: absolute;
+            left: 0;
+            top: 5px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            font-size: 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: auto;
         }
 
         h1 {
@@ -59,6 +150,16 @@
             font-weight: bold;
         }
 
+        /* --- TAB SYSTEM STYLES --- */
+        .tab-content { display: none; animation: fadeIn 0.4s; }
+        .tab-content.active-tab { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- MAIN DASHBOARD STYLES --- */
         .main-content {
             display: flex;
             gap: 20px;
@@ -74,9 +175,7 @@
             border: 1px solid #f0d8c3;
         }
 
-        .form-group {
-            margin-bottom: 15px;
-        }
+        .form-group { margin-bottom: 15px; }
 
         label {
             display: block;
@@ -85,7 +184,7 @@
             color: var(--primary-color);
         }
 
-        input[type="text"], input[type="number"] {
+        input[type="text"], input[type="number"], input[type="date"] {
             width: 100%;
             padding: 10px;
             border: 1px solid #ccc;
@@ -119,15 +218,9 @@
             justify-content: space-between;
         }
         
-        .autocomplete-items div:hover {
-            background-color: #fdebd0;
-        }
+        .autocomplete-items div:hover { background-color: #fdebd0; }
         
-        .item-price-preview {
-            color: #d35400;
-            font-weight: bold;
-            font-size: 0.9em;
-        }
+        .item-price-preview { color: #d35400; font-weight: bold; font-size: 0.9em; }
 
         button {
             background-color: var(--primary-color);
@@ -195,10 +288,7 @@
             margin-top: auto;
         }
 
-        .total-amount {
-            font-size: 24px;
-            font-weight: bold;
-        }
+        .total-amount { font-size: 24px; font-weight: bold; }
 
         .delete-btn {
             background-color: var(--accent-color);
@@ -208,6 +298,7 @@
             border-radius: 4px;
             cursor: pointer;
             font-size: 12px;
+            width: auto;
         }
 
         .button-group {
@@ -216,28 +307,138 @@
             margin-top: 15px;
         }
 
+        /* --- HISTORY SECTION STYLES --- */
+        .history-section {
+            padding-top: 10px;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 5px solid var(--primary-color);
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .history-title-area {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .date-filter-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .date-filter-container input {
+            width: auto;
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+
+        .history-stats {
+            display: flex;
+            gap: 20px;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .stat-box {
+            background: var(--primary-color);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+        }
+
+        .action-icon-btn {
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            color: white;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 14px;
+            margin-right: 5px;
+            transition: transform 0.2s;
+        }
+
+        .action-icon-btn:hover { transform: scale(1.1); }
+        .btn-preview-icon { background-color: #f39c12; }
+        .btn-delete-icon { background-color: #e74c3c; }
+
+        /* --- PREVIEW MODAL STYLES --- */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            backdrop-filter: blur(3px);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        .close-modal {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 20px;
+        }
+
+        .close-modal:hover { color: #333; }
+
+        .preview-receipt-box {
+            background: #fffdf5;
+            border: 1px dashed #ccc;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 14px;
+        }
+
         /* --- PRINT RECEIPT STYLES --- */
         #print-area { display: none; }
 
         @media print {
-            @page {
-                margin: 5mm; /* Removes default browser headers/footers that cause extra pages */
-                size: auto;
-            }
+            @page { margin: 5mm; size: auto; }
             body, html { 
                 background-color: white; 
                 margin: 0; 
                 padding: 0;
-                min-height: auto !important; /* Prevents body height from pushing to page 2 */
+                min-height: auto !important; 
             }
-            .app-container { display: none !important; }
+            .app-container, .modal, .sidebar, .overlay { display: none !important; }
             
             #print-area {
                 display: block;
                 width: 100%;
                 max-width: 100mm;
                 margin: 0 auto;
-                background-color: #eedc5b !important; /* Yellow background */
+                background-color: #eedc5b !important; 
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
                 padding: 15px;
@@ -300,77 +501,153 @@
                 font-weight: bold; 
                 font-size: 14px; 
             }
-            .receipt-footer span {
-                border-top: 1px solid #000; 
-                padding-top: 5px; 
-            }
+            .receipt-footer span { border-top: 1px solid #000; padding-top: 5px; }
         }
 
         @media (max-width: 600px) {
             .main-content { flex-direction: column; }
             .button-group { flex-direction: column; }
+            .history-header { flex-direction: column; text-align: center; justify-content: center; }
+            .history-stats { flex-direction: column; gap: 10px; width: 100%; }
+            .stat-box { text-align: center; }
+            h1 { font-size: 22px; margin-left: 40px; }
+            .menu-btn { padding: 6px 10px; font-size: 18px; top: 2px; }
         }
     </style>
 </head>
 <body>
 
+    <!-- OVERLAY FOR SIDEBAR -->
+    <div class="overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="appSidebar">
+        <div class="sidebar-header">
+            <h2>Sone Restaurant</h2>
+            <button class="close-btn" onclick="toggleSidebar()">&times;</button>
+        </div>
+        <!-- Sidebar Links -->
+        <a href="#" id="link-billing" class="active-link" onclick="openTab('billingTab', 'link-billing')">
+            <i class="fas fa-receipt"></i> Bill Receipt (डैशबोर्ड)
+        </a>
+        <a href="#" id="link-history" onclick="openTab('historyTab', 'link-history')">
+            <i class="fas fa-history"></i> History (हिसाब)
+        </a>
+    </div>
+
     <div class="app-container">
         <header>
+            <button class="menu-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
             <h1>Sone Restaurant</h1>
             <div class="subtitle">DUMRAON STATION ROAD, DUMRAON | Mob.: 9155745145</div>
         </header>
 
-        <div class="main-content">
-            <div class="input-section">
-                <h3><span style="font-size: 1.2em;">🍽️</span> Add Item</h3>
-                <div class="form-group autocomplete-container">
-                    <label for="itemInput">Item Name</label>
-                    <input type="text" id="itemInput" placeholder="Search item here..." autocomplete="off">
-                    <div id="autocompleteList" class="autocomplete-items"></div>
+        <!-- TAB 1: BILLING DASHBOARD -->
+        <div id="billingTab" class="tab-content active-tab">
+            <div class="main-content">
+                <div class="input-section">
+                    <h3><span style="font-size: 1.2em;">🍽️</span> Add Item</h3>
+                    <div class="form-group autocomplete-container">
+                        <label for="itemInput">Item Name</label>
+                        <input type="text" id="itemInput" placeholder="Search item here..." autocomplete="off">
+                        <div id="autocompleteList" class="autocomplete-items"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="priceInput">Price (Rs.)</label>
+                        <input type="number" id="priceInput" readonly style="background-color: #e9ecef;">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="qtyInput">Quantity</label>
+                        <input type="number" id="qtyInput" value="1" min="1">
+                    </div>
+
+                    <button onclick="addItemToBill()"><i class="fas fa-plus"></i> Add to Bill</button>
+                </div>
+
+                <div class="bill-section">
+                    <h3>🧾 Current Bill</h3>
+                    <div class="table-container">
+                        <table id="billTable">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Qty</th>
+                                    <th>Price</th>
+                                    <th>Total</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="billBody">
+                                <!-- Items will be added here -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="total-section">
+                        <span>Grand Total:</span>
+                        <span class="total-amount">Rs. <span id="grandTotal">0.00</span></span>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button class="btn-print" onclick="printBill()"><i class="fas fa-print"></i> Save & Print</button>
+                        <button class="btn-clear" onclick="clearBill()"><i class="fas fa-trash-alt"></i> Clear Order</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: HISTORY SECTION -->
+        <div id="historyTab" class="tab-content">
+            <div class="history-section">
+                <div class="history-header">
+                    <div class="history-title-area">
+                        <h3 style="margin: 0; color: var(--primary-color);"><i class="fas fa-chart-line"></i> हिसाब (History)</h3>
+                        <div class="date-filter-container">
+                            <label for="filterDate" style="margin:0; font-size:14px; color:#555;">तारीख चुनें:</label>
+                            <input type="date" id="filterDate">
+                        </div>
+                    </div>
+                    
+                    <div class="history-stats">
+                        <div class="stat-box">कुल रसीद: <span id="dayBillCount">0</span></div>
+                        <div class="stat-box" style="background: var(--success-color);">कुल बिक्री: Rs. <span id="dayTotalSale">0.00</span></div>
+                    </div>
                 </div>
                 
-                <div class="form-group">
-                    <label for="priceInput">Price (Rs.)</label>
-                    <input type="number" id="priceInput" readonly style="background-color: #e9ecef;">
-                </div>
-
-                <div class="form-group">
-                    <label for="qtyInput">Quantity</label>
-                    <input type="number" id="qtyInput" value="1" min="1">
-                </div>
-
-                <button onclick="addItemToBill()">Add to Bill ➕</button>
-            </div>
-
-            <div class="bill-section">
-                <h3>🧾 Current Bill</h3>
-                <div class="table-container">
-                    <table id="billTable">
+                <div class="table-container" style="max-height: 400px;">
+                    <table>
                         <thead>
                             <tr>
-                                <th>Item</th>
-                                <th>Qty</th>
-                                <th>Price</th>
-                                <th>Total</th>
-                                <th>Action</th>
+                                <th>Bill No.</th>
+                                <th>Time</th>
+                                <th>Items Count</th>
+                                <th>Total Amount</th>
+                                <th style="text-align: center;">Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="billBody">
-                            <!-- Items will be added here -->
+                        <tbody id="historyBody">
+                            <!-- Saved bills will appear here -->
                         </tbody>
                     </table>
                 </div>
-
-                <div class="total-section">
-                    <span>Grand Total:</span>
-                    <span class="total-amount">Rs. <span id="grandTotal">0.00</span></span>
-                </div>
-                
-                <div class="button-group">
-                    <button class="btn-print" onclick="printBill()">🖨️ Print Bill</button>
-                    <button class="btn-clear" onclick="clearBill()">🗑️ Clear / New Order</button>
-                </div>
             </div>
+        </div>
+
+    </div>
+
+    <!-- PREVIEW MODAL -->
+    <div id="previewModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closePreviewModal()">&times;</span>
+            <h3 style="margin-top:0; color:var(--primary-color); text-align:center;">Bill Preview</h3>
+            
+            <div id="previewReceiptBox" class="preview-receipt-box">
+                <!-- Preview details injected here -->
+            </div>
+            
+            <button style="width: 100%; background-color: var(--success-color);" onclick="printFromPreview()"><i class="fas fa-download"></i> Print / Download Bill</button>
         </div>
     </div>
 
@@ -379,6 +656,36 @@
     </div>
 
     <script>
+        // SIDEBAR AND TABS LOGIC
+        function toggleSidebar() {
+            document.getElementById("appSidebar").classList.toggle("open");
+            document.getElementById("sidebarOverlay").classList.toggle("active");
+        }
+
+        function openTab(tabId, linkId) {
+            // Hide all tabs
+            let tabs = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove("active-tab");
+            }
+            
+            // Remove active class from all links
+            let links = document.querySelectorAll(".sidebar a");
+            for (let i = 0; i < links.length; i++) {
+                links[i].classList.remove("active-link");
+            }
+
+            // Show selected tab and active link
+            document.getElementById(tabId).classList.add("active-tab");
+            document.getElementById(linkId).classList.add("active-link");
+            
+            // Close Sidebar after clicking
+            document.getElementById("appSidebar").classList.remove("open");
+            document.getElementById("sidebarOverlay").classList.remove("active");
+        }
+
+
+        // MENU DATA & APP LOGIC
         const menuData = {
             "Veg. Fried Rice": 170, "Egg Fried Rice": 190, "Chi. Fried Rice": 260, "Mushroom Fried Rice": 250, "Mix. Fried Rice": 270, "Paneer Fried Rice": 250,
             "Veg. Manchurian (F)": 170, "Veg. Manchurian (H)": 110, "Paneer Chilly (F)": 220, "Paneer Chilly (H)": 140, "Chi. Chilly (B/L) (F)": 290, "Chi. Chilly (B/L) (H)": 170, "Chi. Chilly (B) (F)": 230, "Chi. Chilly (B) (H)": 150, "Chi. Manchurian": 280, "Chi. Lolliop (B/L) (F)": 310, "Mushroom Chilly (F)": 250, "Mushroom Chilly (H)": 150, "Sweet Corn Crispy": 110, "Baby Corn Crispry": 270,
@@ -402,7 +709,32 @@
 
         const itemNames = Object.keys(menuData);
         let billItems = [];
-        let billCounter = 1; // Started from 1 as requested
+        let billCounter = 1; 
+        let currentPreviewBill = null; 
+
+        // Load History on Startup and set today's date in filter
+        window.onload = function() {
+            let today = new Date();
+            let yyyy = today.getFullYear();
+            let mm = String(today.getMonth() + 1).padStart(2, '0');
+            let dd = String(today.getDate()).padStart(2, '0');
+            
+            document.getElementById('filterDate').value = `${yyyy}-${mm}-${dd}`;
+            
+            loadHistory();
+            
+            let todayStr = new Date().toLocaleDateString('en-GB');
+            let savedBills = JSON.parse(localStorage.getItem('sone_bills')) || [];
+            let todaysBills = savedBills.filter(b => b.date === todayStr);
+            if(todaysBills.length > 0) {
+                billCounter = Math.max(...todaysBills.map(b => b.billNo)) + 1;
+            }
+        };
+
+        // Date Filter Change Event
+        document.getElementById('filterDate').addEventListener('change', function() {
+            loadHistory();
+        });
 
         // Autocomplete functionality
         const input = document.getElementById("itemInput");
@@ -418,7 +750,6 @@
             for (let i = 0; i < itemNames.length; i++) {
                 if (itemNames[i].toLowerCase().includes(val.toLowerCase())) {
                     let b = document.createElement("DIV");
-                    
                     let regex = new RegExp(`(${val})`, "gi");
                     let highlightedName = itemNames[i].replace(regex, "<strong>$1</strong>");
                     
@@ -438,9 +769,7 @@
         });
 
         document.addEventListener("click", function (e) {
-            if (e.target !== input) {
-                list.innerHTML = "";
-            }
+            if (e.target !== input) { list.innerHTML = ""; }
         });
         
         input.addEventListener("keydown", function(e) {
@@ -459,10 +788,7 @@
         });
 
         document.getElementById("qtyInput").addEventListener("keydown", function(e) {
-            if (e.key === "Enter") {
-                e.preventDefault();
-                addItemToBill();
-            }
+            if (e.key === "Enter") { e.preventDefault(); addItemToBill(); }
         });
 
         function addItemToBill() {
@@ -505,14 +831,13 @@
 
             billItems.forEach((item, index) => {
                 grandTotal += item.total;
-                
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
                     <td>${item.name}</td>
                     <td>${item.qty}</td>
                     <td>${item.price.toFixed(2)}</td>
                     <td>${item.total.toFixed(2)}</td>
-                    <td><button class="delete-btn" onclick="removeItem(${index})">X</button></td>
+                    <td><button class="delete-btn" onclick="removeItem(${index})"><i class="fas fa-times"></i></button></td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -521,9 +846,150 @@
         }
 
         function clearBill() {
-            if(confirm("Are you sure you want to clear the current bill?")) {
+            if(confirm("Are you sure you want to clear the current order?")) {
                 billItems = [];
                 updateBillDisplay();
+            }
+        }
+
+        function saveBillToHistory(grandTotal) {
+            let todayDate = new Date().toLocaleDateString('en-GB'); 
+            let timeNow = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            
+            let savedBills = JSON.parse(localStorage.getItem('sone_bills')) || [];
+            
+            let newBillObj = {
+                id: Date.now(),
+                billNo: billCounter,
+                date: todayDate,
+                time: timeNow,
+                items: JSON.parse(JSON.stringify(billItems)), 
+                total: grandTotal
+            };
+            
+            savedBills.push(newBillObj);
+            localStorage.setItem('sone_bills', JSON.stringify(savedBills));
+            
+            let today = new Date();
+            let yyyy = today.getFullYear();
+            let mm = String(today.getMonth() + 1).padStart(2, '0');
+            let dd = String(today.getDate()).padStart(2, '0');
+            document.getElementById('filterDate').value = `${yyyy}-${mm}-${dd}`;
+
+            loadHistory();
+        }
+
+        function loadHistory() {
+            let inputDateStr = document.getElementById('filterDate').value;
+            let displayDate = "";
+            
+            if(inputDateStr) {
+                let parts = inputDateStr.split('-');
+                displayDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
+            } else {
+                displayDate = new Date().toLocaleDateString('en-GB');
+            }
+            
+            let savedBills = JSON.parse(localStorage.getItem('sone_bills')) || [];
+            let filteredBills = savedBills.filter(bill => bill.date === displayDate);
+            
+            const historyBody = document.getElementById("historyBody");
+            historyBody.innerHTML = "";
+            
+            let totalSale = 0;
+
+            filteredBills.forEach((bill) => {
+                totalSale += bill.total;
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td><b>#${bill.billNo}</b></td>
+                    <td>${bill.time}</td>
+                    <td>${bill.items.length} Items</td>
+                    <td>Rs. ${bill.total.toFixed(2)}</td>
+                    <td style="text-align: center;">
+                        <button class="action-icon-btn btn-preview-icon" onclick="openPreviewModal(${bill.id})" title="Preview Bill">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="action-icon-btn btn-delete-icon" onclick="deleteSavedBill(${bill.id})" title="Delete Mistake Bill">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                historyBody.prepend(tr); 
+            });
+
+            document.getElementById("dayBillCount").innerText = filteredBills.length;
+            document.getElementById("dayTotalSale").innerText = totalSale.toFixed(2);
+        }
+
+        function deleteSavedBill(id) {
+            if(confirm("क्या आप सच में इस सेव किए गए बिल को डिलीट करना चाहते हैं? (यह कमाई से हट जाएगा)")) {
+                let savedBills = JSON.parse(localStorage.getItem('sone_bills')) || [];
+                savedBills = savedBills.filter(bill => bill.id !== id);
+                localStorage.setItem('sone_bills', JSON.stringify(savedBills));
+                loadHistory(); 
+            }
+        }
+
+        /* --- PREVIEW MODAL FUNCTIONS --- */
+        function openPreviewModal(id) {
+            let savedBills = JSON.parse(localStorage.getItem('sone_bills')) || [];
+            let billToPreview = savedBills.find(bill => bill.id === id);
+            
+            if(billToPreview) {
+                currentPreviewBill = billToPreview;
+                const previewBox = document.getElementById("previewReceiptBox");
+                
+                let html = `
+                    <div style="text-align:center; border-bottom:1px dashed #999; padding-bottom:10px; margin-bottom:10px;">
+                        <h4 style="margin:0;">SONE RESTAURANT</h4>
+                        <small>Bill No: ${billToPreview.billNo} | Date: ${billToPreview.date}</small>
+                    </div>
+                    <table style="width:100%; border-collapse: collapse;">
+                        <tr style="border-bottom:1px dashed #999;">
+                            <th style="text-align:left; padding-bottom:5px;">Item</th>
+                            <th style="text-align:center; padding-bottom:5px;">Qty</th>
+                            <th style="text-align:right; padding-bottom:5px;">Amt</th>
+                        </tr>
+                `;
+                
+                billToPreview.items.forEach(item => {
+                    html += `
+                        <tr>
+                            <td style="padding: 5px 0;">${item.name}</td>
+                            <td style="text-align:center;">${item.qty}</td>
+                            <td style="text-align:right;">${item.total.toFixed(2)}</td>
+                        </tr>
+                    `;
+                });
+                
+                html += `
+                    </table>
+                    <div style="text-align:right; border-top:1px dashed #999; padding-top:10px; margin-top:10px; font-weight:bold; font-size:16px;">
+                        Total: Rs. ${billToPreview.total.toFixed(2)}
+                    </div>
+                `;
+                
+                previewBox.innerHTML = html;
+                document.getElementById('previewModal').style.display = "block";
+            }
+        }
+
+        function closePreviewModal() {
+            document.getElementById('previewModal').style.display = "none";
+            currentPreviewBill = null;
+        }
+
+        window.onclick = function(event) {
+            let modal = document.getElementById('previewModal');
+            if (event.target == modal) { closePreviewModal(); }
+        }
+
+        function printFromPreview() {
+            if(currentPreviewBill) {
+                generatePrintHtml(currentPreviewBill.items, currentPreviewBill.billNo, currentPreviewBill.date);
+                closePreviewModal(); 
+                window.print();
             }
         }
 
@@ -532,14 +998,20 @@
                 alert("Bill is empty! Add some items first.");
                 return;
             }
-
-            const printDiv = document.getElementById("print-area");
+            let grandTotal = billItems.reduce((sum, item) => sum + item.total, 0);
             
-            const today = new Date();
-            const dateStr = today.getDate().toString().padStart(2, '0') + '/' + 
-                            (today.getMonth() + 1).toString().padStart(2, '0') + '/' + 
-                            today.getFullYear();
+            saveBillToHistory(grandTotal);
+            let todayDate = new Date().toLocaleDateString('en-GB');
+            generatePrintHtml(billItems, billCounter, todayDate);
+            window.print();
+            
+            billCounter++; 
+            billItems = [];
+            updateBillDisplay();
+        }
 
+        function generatePrintHtml(itemsArray, bNumber, bDate) {
+            const printDiv = document.getElementById("print-area");
             let grandTotal = 0;
 
             let html = `
@@ -550,13 +1022,11 @@
                     </div>
                     <h2>SONE RESTAURANT</h2>
                     <div class="address">DUMRAON STATION ROAD, DUMRAON</div>
-                    
                     <div class="meta-bar">
-                        <span>No. ${billCounter}</span>
-                        <span>Date: ${dateStr}</span>
+                        <span>No. ${bNumber}</span>
+                        <span>Date: ${bDate}</span>
                     </div>
                 </div>
-
                 <table class="receipt-table">
                     <thead>
                         <tr>
@@ -569,8 +1039,7 @@
                     <tbody>
             `;
 
-            // Added Sl. No. logic here
-            billItems.forEach((item, index) => {
+            itemsArray.forEach((item, index) => {
                 html += `
                     <tr>
                         <td style="text-align: center;">${index + 1}</td>
@@ -582,8 +1051,7 @@
                 grandTotal += item.total;
             });
 
-            // Maintain some padding rows so it looks like a real memo pad
-            for(let i=0; i < (7 - billItems.length); i++) {
+            for(let i=0; i < (7 - itemsArray.length); i++) {
                  html += `<tr><td>&nbsp;</td><td></td><td></td><td></td></tr>`;
             }
 
@@ -598,12 +1066,7 @@
                     <span>Signature</span>
                 </div>
             `;
-
             printDiv.innerHTML = html;
-            
-            window.print();
-            
-            billCounter++; // Next bill will be 2, then 3, etc.
         }
     </script>
 </body>
