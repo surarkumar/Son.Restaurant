@@ -44,18 +44,6 @@
         .modal-content { background-color: var(--ios-card); margin: 5% auto; padding: 25px; border-radius: 20px; width: 90%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
         .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px;}
         
-        /* THERMAL RECEIPT PREVIEW STYLE */
-        .receipt-preview {
-            background: #fff; border: 1px solid #ddd; padding: 20px; font-family: 'Courier New', Courier, monospace;
-            font-size: 12px; color: #000; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 20px;
-        }
-        .receipt-preview h2 { margin: 0 0 5px; font-size: 18px; text-align: center; border-bottom: 1px dashed #000; padding-bottom: 10px;}
-        .receipt-preview table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        .receipt-preview th, .receipt-preview td { border-bottom: 1px dashed #ddd; padding: 6px 0; background: none; }
-        .receipt-preview th { font-weight: bold; color: #000; }
-        .receipt-preview .totals { border-top: 1px dashed #000; padding-top: 10px; margin-top: 10px; font-weight: bold; }
-        .receipt-preview .totals div { display: flex; justify-content: space-between; margin-bottom: 5px; }
-
         /* SIDEBAR */
         .sidebar { width: 260px; background-color: #FFFFFF; position: fixed; height: 100%; left: -260px; top: 0; z-index: 1001; transition: 0.3s; }
         .sidebar.show { left: 0; }
@@ -67,14 +55,76 @@
         .tab-panel { display: none; padding: 10px 20px; }
         .tab-panel.active { display: block; }
 
-        /* --- PRINT CSS (Hides everything except print area) --- */
+        /* ======================================================== */
+        /* COLORFUL & UNIQUE CASH MEMO BILL DESIGN (Print/Preview)  */
+        /* ======================================================== */
+        .bill-container {
+            max-width: 400px;
+            margin: 0 auto;
+            border: 2px dashed #FF9500; 
+            padding: 20px; 
+            border-radius: 12px; 
+            background: #FFFAEA !important; /* असली कैश मेमो जैसा पीला रंग */
+            color: #333; 
+            font-family: 'Poppins', sans-serif;
+            box-shadow: 0 8px 25px rgba(255, 149, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        .bill-container::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px;
+            background: linear-gradient(135deg, #FF9500 0%, #FF5E3A 100%) !important;
+            -webkit-print-color-adjust: exact; print-color-adjust: exact;
+        }
+        .bill-header { display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; margin-bottom: 12px; border-bottom: 2px solid #FFD180; padding-bottom: 8px; color: #D32F2F; }
+        .bill-title { text-align: center; margin: 15px 0; }
+        .bill-title h2 { margin: 0 0 5px 0; font-family: 'Montserrat', sans-serif; font-size: 24px; font-weight: 800; color: #D32F2F; text-shadow: 1px 1px 0px rgba(0,0,0,0.05); }
+        .bill-title div { font-size: 12px; font-weight: 600; color: #666; }
+        .bill-info { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 13px; font-weight: 700; color: #444; background: #FFF3E0 !important; padding: 8px 10px; border-radius: 6px; -webkit-print-color-adjust: exact; print-color-adjust: exact;}
+        .print-table { width: 100%; border-collapse: collapse; margin-top: 5px; font-size: 13px; color: #222; }
+        .print-table th, .print-table td { border: 1px solid #FFD180; padding: 8px; }
+        .print-table th { background: linear-gradient(135deg, #FF9500, #FF5E3A) !important; color: white !important; text-align: left; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-weight: 600; }
+        .print-table th:nth-child(2), .print-table td:nth-child(2) { text-align: center; }
+        .print-table th:last-child, .print-table td:last-child { text-align: right; }
+        .print-table tr:nth-child(even) td { background: #FFF3E0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        
+        .bill-totals { margin-top: 15px; font-weight: 700; font-size: 14px; color: #333; }
+        .bill-totals div { display: flex; justify-content: space-between; padding: 5px 10px; }
+        .bill-totals .grand-total { 
+            background: #34C759 !important; color: white !important; 
+            -webkit-print-color-adjust: exact; print-color-adjust: exact;
+            border-radius: 6px; margin-top: 8px; padding: 10px; font-size: 16px; 
+            box-shadow: 0 4px 10px rgba(52, 199, 89, 0.3); 
+        }
+        .bill-signature { margin-top: 40px; text-align: right; font-weight: 700; font-style: italic; color: #D32F2F; }
+        .bill-signature span { border-top: 2px dashed #FF9500; padding-top: 5px; display: inline-block; width: 120px; text-align: center; }
+
+        /* स्क्रीन पर प्रिंट एरिया को छुपाने के लिए */
+        #print-area { display: none; }
+
+        /* --- PRINT CSS --- */
         @media print { 
+            @page { margin: 0; size: auto; } /* ब्राउज़र के डिफ़ॉल्ट मार्जिन को हटाता है */
             body * { visibility: hidden; } 
+            
             #print-area, #print-area * { visibility: visible; } 
-            #print-area { position: absolute; left: 0; top: 0; width: 100%; font-family: 'Courier New', Courier, monospace; font-size: 12px; color: #000; background: #fff; padding: 10px;} 
-            .print-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-            .print-table th, .print-table td { border-bottom: 1px dashed #ccc; padding: 6px 0; text-align: left; }
-            .print-table th:last-child, .print-table td:last-child { text-align: right; }
+            #print-area { 
+                display: flex !important; 
+                justify-content: center; 
+                position: absolute; 
+                left: 0; top: 0; width: 100%;
+                padding: 15mm 10mm; 
+                box-sizing: border-box;
+                background: #fff;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            .bill-container {
+                width: 100%; max-width: 450px; /* प्रिंट में चौड़ाई सेट करने के लिए */
+                box-shadow: none;
+            }
         }
     </style>
 </head>
@@ -171,14 +221,14 @@
 
     <!-- PREVIEW MODAL -->
     <div id="previewModal" class="modal">
-        <div class="modal-content" style="max-width: 350px; background: #f8f9fa;">
+        <div class="modal-content" style="max-width: 440px; background: #f8f9fa;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
                 <h3 style="margin:0; font-family:'Montserrat';"><i class="fas fa-eye" style="color:var(--ios-blue);"></i> Bill Preview</h3>
                 <i class="fas fa-times" style="font-size:20px; color:#aaa; cursor:pointer;" onclick="closePreviewModal()"></i>
             </div>
             
-            <div id="previewReceiptBox" class="receipt-preview">
-                <!-- Data will be injected here -->
+            <div id="previewReceiptBox" style="margin-bottom: 20px;">
+                <!-- Data will be injected here using getBillHTML -->
             </div>
             
             <button class="btn-checkout" style="width:100%;" onclick="printFromPreview()"><i class="fas fa-print"></i> Print Bill</button>
@@ -199,7 +249,7 @@
         let displayDate = `${String(today.getDate()).padStart(2, '0')}/${String(today.getMonth() + 1).padStart(2, '0')}/${today.getFullYear()}`;
         document.getElementById('displayDate').innerText = displayDate;
 
-        // MENU DATA (Added Mutton Items)
+        // MENU DATA
         const menuData = {
             "Mutton Spl. (8 Pic)": 650, "Mutton Estu (2 Pic)": 220, "Mutton Curry (4 Pic)": 300, "Mutton Do Pyaza (4 Pic)": 320,
             "Water Bottle 20": 20, "Water Bottle 30": 30, "Water Bottle 35": 35,
@@ -312,44 +362,72 @@
             setTimeout(() => { window.print(); billCounter++; billItems=[]; updateBillDisplay(); loadHistory(); }, 300);
         }
 
+        // --- NEW BEAUTIFUL COLORED HTML GENERATOR FOR BOTH PREVIEW AND PRINT ---
+        function getBillHTML(billData) {
+            let html = `
+            <div class="bill-container">
+                <div class="bill-header">
+                    <span>CASH MEMO</span>
+                    <span><i class="fas fa-phone-alt"></i> Mob.: 9155745145</span>
+                </div>
+                <div class="bill-title">
+                    <h2><i class="fas fa-utensils"></i> SONE RESTAURANT</h2>
+                    <div>DUMRAON STATION ROAD, DUMRAON</div>
+                </div>
+                <div class="bill-info">
+                    <span>Bill No: <b>${billData.billNo}</b></span>
+                    <span>Date: <b>${billData.date}</b></span>
+                </div>
+                ${billData.custName ? `<div style="text-align:left; font-size:14px; font-weight:700; margin-bottom:12px; color:#D32F2F;">Customer Name: ${billData.custName}</div>` : ''}
+                <table class="print-table">
+                    <tr><th>PARTICULARS</th><th>QTY</th><th>AMOUNT (₹)</th></tr>`;
+            
+            billData.items.forEach(i => {
+                html += `<tr><td>${i.name}</td><td>${i.qty}</td><td>${i.total}</td></tr>`;
+            });
+            
+            html += `
+                </table>
+                <div class="bill-totals">
+                    <div><span>Subtotal:</span><span>₹ ${billData.total}</span></div>`;
+            if(billData.disc > 0) html += `<div style="color:#D32F2F;"><span>Discount:</span><span>- ₹ ${billData.disc}</span></div>`;
+            if(billData.paid > 0) html += `<div style="color:#FF9500;"><span>Paid Amount:</span><span>₹ ${billData.paid}</span></div>`;
+            if(billData.udhaar > 0) html += `<div style="color:#D32F2F;"><span>Due Balance (उधार):</span><span>₹ ${billData.udhaar}</span></div>`;
+            
+            html += `
+                    <div class="grand-total">
+                        <span>GRAND TOTAL</span><span>₹ ${billData.total - billData.disc}</span>
+                    </div>
+                </div>
+                <div class="bill-signature">
+                    <span>Authorized Sign</span>
+                </div>
+                <div style="text-align:center; margin-top:20px; font-weight:800; font-size:13px; color:#D32F2F;">Thank You! Visit Again. <i class="fas fa-smile"></i></div>
+            </div>`;
+            return html;
+        }
+
         function openPreviewModal(id) {
             let sb = JSON.parse(localStorage.getItem('sone_bills_isolated')) || [];
             let bill = sb.find(b => b.id === id);
             if(bill) {
                 currentPreviewBill = bill;
-                let html = `<div style="text-align:center; border-bottom:1px dashed #000; padding-bottom:10px;">
-                <h2 style="margin:0; font-family:sans-serif; font-size:18px;">SONE RESTAURANT</h2><div>Station Road, Dumraon</div>
-                <div style="display:flex;justify-content:space-between;margin-top:5px;"><span>Bill No: ${bill.billNo}</span><span>Date: ${bill.date}</span></div>
-                ${bill.custName?`<div style="text-align:left;">Name: ${bill.custName}</div>`:''}</div>
-                <table style="width:100%; border-collapse:collapse; margin-top:10px;"><tr><th style="text-align:left;border-bottom:1px dashed #ccc;">Item</th><th>Qty</th><th style="text-align:right;border-bottom:1px dashed #ccc;">Amt</th></tr>`;
-                bill.items.forEach(i => html += `<tr><td style="border-bottom:1px dashed #eee; padding:4px 0;">${i.name}</td><td style="text-align:center;border-bottom:1px dashed #eee;">${i.qty}</td><td style="text-align:right;border-bottom:1px dashed #eee;">${i.total}</td></tr>`);
-                html += `</table><div style="border-top:1px dashed #000; padding-top:5px; font-weight:bold;">
-                <div style="display:flex;justify-content:space-between;"><span>Subtotal:</span><span>₹ ${bill.total}</span></div>`;
-                if(bill.disc>0) html += `<div style="display:flex;justify-content:space-between; color:red;"><span>Discount:</span><span>- ₹ ${bill.disc}</span></div>`;
-                if(bill.paid>0) html += `<div style="display:flex;justify-content:space-between; color:green;"><span>Paid:</span><span>₹ ${bill.paid}</span></div>`;
-                if(bill.udhaar>0) html += `<div style="display:flex;justify-content:space-between; color:orange;"><span>Balance:</span><span>₹ ${bill.udhaar}</span></div>`;
-                html += `</div><div style="text-align:center; margin-top:10px; font-weight:bold;">Thank You!</div>`;
-                
-                document.getElementById('previewReceiptBox').innerHTML = html;
+                document.getElementById('previewReceiptBox').innerHTML = getBillHTML(bill);
                 document.getElementById('previewModal').style.display = 'block';
             }
         }
         function closePreviewModal() { document.getElementById('previewModal').style.display = 'none'; currentPreviewBill = null; }
-        function printFromPreview() { if(currentPreviewBill) { generatePrintHtml(currentPreviewBill); closePreviewModal(); setTimeout(() => window.print(), 300); } }
+        
+        function printFromPreview() { 
+            if(currentPreviewBill) { 
+                generatePrintHtml(currentPreviewBill); 
+                closePreviewModal(); 
+                setTimeout(() => window.print(), 300); 
+            } 
+        }
 
         function generatePrintHtml(billData) {
-            let pH = `<div class="print-header"><h2>SONE RESTAURANT</h2><div>Station Road, Dumraon</div>
-                <div style="display:flex;justify-content:space-between;margin-top:5px;"><span>Bill No: ${billData.billNo}</span><span>Date: ${billData.date}</span></div>
-                ${billData.custName?`<div style="text-align:left;">Name: ${billData.custName}</div>`:''}</div>
-                <table class="print-table"><tr><th style="text-align:left;">Item</th><th>Qty</th><th style="text-align:right;">Amt</th></tr>`;
-            billData.items.forEach(i => pH += `<tr><td>${i.name}</td><td style="text-align:center;">${i.qty}</td><td style="text-align:right;">${i.total}</td></tr>`);
-            pH += `</table><div style="border-top:1px dashed #000; padding-top:5px; font-weight:bold;">
-                <div style="display:flex;justify-content:space-between;"><span>Subtotal:</span><span>₹ ${billData.total}</span></div>`;
-            if(billData.disc>0) pH += `<div style="display:flex;justify-content:space-between;"><span>Discount:</span><span>- ₹ ${billData.disc}</span></div>`;
-            if(billData.paid>0) pH += `<div style="display:flex;justify-content:space-between;"><span>Paid:</span><span>₹ ${billData.paid}</span></div>`;
-            if(billData.udhaar>0) pH += `<div style="display:flex;justify-content:space-between;"><span>Balance:</span><span>₹ ${billData.udhaar}</span></div>`;
-            pH += `</div><div style="text-align:center; margin-top:15px; font-weight:bold;">Thank You!</div>`;
-            document.getElementById('print-area').innerHTML = pH;
+            document.getElementById('print-area').innerHTML = getBillHTML(billData);
         }
 
         function loadHistory() {
